@@ -1,0 +1,25 @@
+// Compile the same version into Forge's annotation and processed metadata.
+def generatedVersion = layout.buildDirectory.dir('generated/sources/modVersion/java')
+def generateModVersion = tasks.register('generateModVersion') {
+    inputs.property 'version', project.version.toString()
+    outputs.dir generatedVersion
+    doLast {
+        File source = new File(generatedVersion.get().asFile, 'mcjty/lostcities/BuildVersion.java')
+        source.parentFile.mkdirs()
+        source.setText("""package mcjty.lostcities;
+public final class BuildVersion {
+    public static final String VERSION = "${project.version}";
+    private BuildVersion() {}
+}
+""", 'UTF-8')
+    }
+}
+sourceSets.main.java.srcDir generatedVersion
+tasks.named('compileJava') { dependsOn generateModVersion }
+tasks.named('processResources') {
+    inputs.property 'version', project.version.toString()
+    inputs.property 'minecraftVersion', minecraftTarget
+    filesMatching('mcmod.info') {
+        expand(version: project.version, mcversion: minecraftTarget)
+    }
+}

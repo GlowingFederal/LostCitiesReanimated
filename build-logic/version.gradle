@@ -1,0 +1,11 @@
+def versionFile = new File(repositoryRoot, 'version.properties')
+if (!versionFile.isFile()) {
+    throw new GradleException("Missing centralized version file: ${versionFile}")
+}
+def releaseProperties = new Properties()
+versionFile.withInputStream { releaseProperties.load(it) }
+def releaseVersion = releaseProperties.getProperty('version')?.trim()
+if (!releaseVersion || !(releaseVersion ==~ /[A-Za-z0-9][A-Za-z0-9._+-]*/)) {
+    throw new GradleException("${versionFile} must define a nonempty, filename-safe 'version' (letters, digits, '.', '_', '+', '-').")
+}
+version = releaseVersion

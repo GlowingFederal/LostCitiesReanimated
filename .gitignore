@@ -4,4 +4,7 @@
 /build/
 /run/
 /logs/
+**/.gradle/
+**/build/
+**/run/
 .DS_Store

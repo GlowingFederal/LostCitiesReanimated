@@ -1,0 +1,23 @@
+def modernAssetRoot = file('../../src/main/resources/data/lostcities/lostcities')
+def modernIndex = layout.buildDirectory.dir('generated/modernIndex')
+tasks.register('indexModernAssets') {
+    inputs.dir modernAssetRoot
+    outputs.dir modernIndex
+    doLast {
+        File index = new File(modernIndex.get().asFile, 'assets/lostcities/modern/index.txt')
+        index.parentFile.mkdirs()
+        index.text = fileTree(modernAssetRoot).matching { include '**/*.json' }.files.collect {
+            modernAssetRoot.toPath().relativize(it.toPath()).toString().replace('\\', '/')
+        }.sort().join('\n') + '\n'
+    }
+}
+processResources {
+    dependsOn 'indexModernAssets'
+    from(modernAssetRoot) { into 'assets/lostcities/modern' }
+    from modernIndex
+}
+
+jar {
+    from('../../LICENSE') { into 'META-INF' }
+    from('../../THIRD_PARTY_NOTICES.md') { into 'META-INF' }
+}

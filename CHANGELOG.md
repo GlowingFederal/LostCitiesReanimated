@@ -1,3 +1,77 @@
+# Changelog
+
+2026-11-12 04:12 — Unified versioning and release builds
+
+- Centralize the existing `0.1.0-dev` backport version in root `version.properties`, including both target artifacts and Forge mod metadata.
+- Add root `release` to build Forge 1.7.10 and 1.12.2 through their production pipelines and collect only the two standard distribution JARs in `build/release/`, clearing previous release output and failing if a target or expected artifact is unavailable.
+
+2026-11-11 22:41 — BOP biome initialization in native extra dimensions
+
+- Fix 1.12.2 singleplayer startup with BOP installed when an extra Lost Cities dimension uses BOP biomes and the overworld uses another world type. Construct BOP's native biome layers with the registered BOP type and original settings without temporarily changing the saved world header.
+
+2026-11-06 06:19 — Native terrain integrations, spherical landscapes and functional editor tools
+
+- Delegate 1.12.2 BOP overlays to the original terrain, surface and structure instances, including BOP temples and native mansion persistence. Retain the native terrain adapter extension point without a mandatory BOP dependency.
+- Add native spheres and cavern-spheres landscapes, bounded shell clearing and sphere-aware city, biome and transit selection. Keep existing space and legacy landscape identities intact.
+- Implement 1.7.10 profile spawn restrictions and safe spawn selection; keep native spawn searches within Y 0–255 and center predefined-city searches on their configured coordinates.
+- Run editor placement through the authoritative template path, including local palettes, functional markers, loot, spawners and block-entity data. Export from the sender dimension, preserve native NBT and include complete part palettes and building definitions. Require operator permissions and validate native export bounds on both targets.
+- Select a fresh dimension generation mode independently of the overworld save header, retain saved mode markers and existing dimension terrain, and reject unavailable dimension profiles instead of falling back silently. Load new sphere profiles privately when older configuration lists omit them.
+- Bound native 1.12.2 special-bed destination searches to 64 chunks, correct the search ring coordinates and provide a safe floor with headroom when the destination is void or entirely liquid.
+- Skip disabled sphere palette initialization so space height planning cannot recursively initialize its own missing sphere. Use explicit editor placement context so random per-building loot suppression cannot disable operator-placed content.
+- Merge compound loot NBT recursively on 1.7.10 and reject unsupported treasure enchanting and table-root conditions with explicit diagnostics.
+- Finish editor loot, spawners, tags, lighting and saplings through all four native population owners. Replace only jobs inside the edited volume and preserve unrelated queued work, including torch orientation jobs.
+- Start fresh singleplayer overworlds in modern mode even when the native client has already written the world header. Existing saved mode markers and worlds with saved terrain retain their generation mode.
+- Keep condition-selected spawner identities stable across native spawn cycles and restarts by updating their weighted spawn pools along with the current mob, and synchronize editor changes to clients.
+
+2026-11-05 08:03 — Native Java 8 targets and modern generation backport
+
+- Added independent Forge 1.7.10 and 1.12.2 builds, portable asset/material processing and modern city, street, highway, multibuilding, scattered and railway planning.
+- Preserved legacy generation mode and APIs, profile identities, native terrain events and world-type adapters; new worlds persist their mode, material choices and highway hubs.
+- Converted modern palettes and template data to native states/metadata, including functional orientation, inventories, loot and spawners. Added optional registry-based block providers and structural substitutions.
+- Added native 1.7.10 dimension travel, configurable extra dimensions, tree/vine population and integration callbacks. Prevented cross-world terrain-adapter reuse and startup cleanup from invalidating newly constructed generators.
+- Kept placement within the 0–255 world height and corrected density interpolation for modern 1.12.2 worlds while retaining the legacy-world path.
+
+- Added native profile selection on 1.7.10, climate-weighted biome restrictions and manual mappings, and modern noise/radial city-style thresholds. Restored mansion and monument avoidance in modern cities.
+- Bound raw terrain and metadata caches, preserved deferred population through restarts, and enabled qualified native density-lattice planning. Added primary-road bridge spans and reusable transport support parts.
+
+- Save native recovery snapshots for selected optional materials in modern city chunks, including representable orientation and inventory data, so removing a provider can preserve saved structures without regenerating them.
+
+- Keep adjacent barrel substitutes separate with alternating native chest types, and resolve palette aliases after local overrides while retaining their loot, spawner and block-entity metadata.
+
+- Treat explicit metadata zero as a saved state, separately from a block’s default state, and reject Forge missing-block placeholders during material resolution and chunk recovery.
+
+- Bound complete cellar-corridor searches in modern worlds, consistently rejecting oversized spans while retaining the legacy-mode algorithm.
+
+- Synchronize the server-selected fog and horizon presentation to native 1.7.10 clients with bounded, thread-owned packet handling and disconnect cleanup.
+
+- Support namespaced modern asset directories, validate cross-asset references and inheritance cycles at startup, and isolate legacy fallback assets between generation modes. Resolve dynamic palette aliases without recursion and preserve metadata-only inherited overrides.
+
+- Own metadata caches per generator, retain only active or unsaved population work in memory, and persist exact placement conditions for deferred loot and spawners. Place building fronts in their actual destination chunk and keep building-local palettes off streets.
+
+- Clear native 1.12.2 profile presentation between connections, reject stale queued replies, and keep server profile caches separate from client state.
+
+- Add opt-in city generation to normal overworlds and compatible dimensions without changing saved world types or regenerating completed chunks. Preserve native base terrain and non-city surface hooks, and validate terrain adapters before generation.
+
+- Apply final hierarchical road filtering before building selection, honor predefined and multibuilding precedence, and connect accepted street slopes at both ends.
+
+- Resolve inherited city-style park, foliage, front, fountain and corridor settings against profile defaults; add park border/elevation controls, palette grass and slope border openings. Validate optional style probabilities and palette characters before world creation.
+
+- Resolve world styles after the saved generation mode is available, allowing modern-only custom world styles during native world construction.
+
+- Add optional YUNG’s Legacy Better Caves integration using its actual carving engine and native buffers, including flooded ravines and dimension configuration. Preserve other cave replacements and honor native maxCaveHeight on 1.7.10 as well as 1.12.2.
+
+- Discover native 1.12.2 presentation settings for normal-world overlays with bounded retries and explicit non-city replies; reject replies from disconnected network handlers.
+
+- Keep hard-air template markers out of block-state rotation so rotated native 1.12.2 parts cannot leave real command blocks in generated interiors. Match queued 1.7.10 presentation replies to their active network handler.
+
+- Restore palette random state across nested generation contexts and refresh each generator’s profile-specific base/liquid materials when entering a scope.
+
+- Load namespaced custom loot resources, compile supported modern number/function formats, and retain native table definitions with saved worlds while preserving locally edited tables. Use Forge’s native loot manager on 1.12.2 and native inventory, NBT and enchanting APIs on 1.7.10; diagnose unsupported operations and cyclic references.
+
+## Preserved upstream history
+
+The following entries describe their original upstream versions, not validation of the legacy backport.
+
 1.20-7.5.7:
 - Fixed the Transport preview crashing when customising cities before creating a world
 

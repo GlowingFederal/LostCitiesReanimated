@@ -1,0 +1,18 @@
+plugins { id 'java'; id 'com.gtnewhorizons.retrofuturagradle' version '2.0.4' }
+group = 'mcjty.lostcities'
+ext.repositoryRoot = file('../..')
+ext.minecraftTarget = '1.7.10'
+apply from: '../../build-logic/version.gradle'
+base { archivesName = 'lostcities-reanimated' }
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+minecraft { mcVersion = '1.7.10'; username = 'CityTester' }
+sourceSets.main.java.srcDir '../../common/src/main/java'
+sourceSets.main.resources.srcDir '../../common/src/main/resources'
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.withType(AbstractArchiveTask).configureEach { archiveVersion = "${project.version}+mc1.7.10" }
+jar.finalizedBy 'reobfJar'
+repositories { mavenCentral() }
+dependencies { compileOnly 'com.google.code.findbugs:jsr305:3.0.2' }
+
+apply from: '../../build-logic/assets.gradle'
+apply from: '../../build-logic/mod-version.gradle'

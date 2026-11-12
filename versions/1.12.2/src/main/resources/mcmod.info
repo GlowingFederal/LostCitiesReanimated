@@ -1,0 +1,16 @@
+[
+{
+  "modid": "lostcities",
+  "name": "Lost Cities Reanimated",
+  "description": "Modern Lost Cities generation adapted to native legacy Forge",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/GlowingFederal/LostCitiesReanimated",
+  "updateUrl": "",
+  "authorList": ["McJty", "Lost Cities contributors", "Lost Cities Reanimated contributors"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

@@ -1,0 +1,113 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://plugins.gradle.org/m2/' }
+        maven { url = 'https://maven.firstdark.dev/releases' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath 'org.parchmentmc:librarian:1.+'
+        classpath 'com.hypherionmc.modutils:modpublisher:2.0.4'
+    }
+}
+
+//repositories {
+//    flatDir {
+//        dir 'libs'
+//    }
+//}
+
+
+apply plugin: 'com.hypherionmc.modutils.modpublisher'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+if (project.file('../gradletools.gradle').exists()) {
+    apply from: '../gradletools.gradle'
+} else {
+    apply from: 'https://raw.githubusercontent.com/McJtyMods/MultiWorkspace/1.20_tech/gradletools.gradle'
+}
+
+group = "com.github.mcjty"
+archivesBaseName = "lostcities"
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+if (System.getenv('BUILD_NUMBER') != null) {
+    version += "-${System.getenv('BUILD_NUMBER')}"
+}
+
+repos()
+runs('lostcities')
+jars('lostcities')
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+dependencies {
+    mc()
+    jei()
+    top()
+//    runtimeOnly fg.deobf('local:xaeroworldmap-forge-1.20.1:1.43.0')
+}
+
+modpublisher(['the-one-probe'], [], ['the-one-probe'], [], [])
+
+task apiJar(type: Jar) {
+    classifier = "api"
+    from(sourceSets.main.output) {
+        include "mcjty/lostcities/api/**"
+    }
+}
+
+artifacts {
+    archives apiJar
+}
+
+publishing {
+    publications.create('mavenJava', MavenPublication) {
+        from components.java
+        artifact apiJar
+
+        artifactId = project.archivesBaseName
+        pom {
+            name = 'LostCities'
+            description = 'Lost Cities'
+            scm {
+                url = 'https://github.com/McJtyMods/LostCities'
+                connection = 'scm:git:git@github.com:McJtyMods/LostCities.git'
+                developerConnection = 'scm:git:git@github.com:McJtyMods/LostCities.git'
+            }
+            issueManagement {
+                system = 'github'
+                url = 'https://github.com/McJtyMods/LostCities/issues'
+            }
+            licenses {
+                license {
+                    name = 'MIT'
+                    distribution = 'repo'
+                }
+            }
+            developers {
+                developer {
+                    id = 'McJty'
+                    name = 'McJty'
+                    roles = ['developer']
+                }
+            }
+        }
+    }
+    repositories {
+        if (System.getenv('local_maven') != null) {
+            maven {
+                name = 'local'
+                url = 'file://' + System.getenv('local_maven')
+            }
+        }
+    }
+}
+
