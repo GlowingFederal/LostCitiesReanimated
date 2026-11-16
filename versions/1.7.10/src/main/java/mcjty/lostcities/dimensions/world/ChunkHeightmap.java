@@ -10,8 +10,8 @@ import mcjty.lostcities.dimensions.world.terraingen.LostCitiesTerrainGenerator;
 public class ChunkHeightmap {
     private byte heightmap[] = new byte[16*16];
 
-    public ChunkHeightmap(IPrimerDriver driver, LandscapeType type, int groundLevel, char baseChar) {
-        char air = LostCitiesTerrainGenerator.airChar;
+    public ChunkHeightmap(IPrimerDriver driver, LandscapeType type, int groundLevel, int baseChar) {
+        int air = LostCitiesTerrainGenerator.airChar;
 
         if ((type == LandscapeType.CAVERN || type == LandscapeType.CAVERNSPHERES)) {
             // Here we try to find the height inside the cavern itself. Ignoring the top layer
@@ -20,14 +20,14 @@ public class ChunkHeightmap {
                 for (int z = 0; z < 16; z++) {
                     int y = base;
                     driver.current(x, y, z);
-                    while (y < 100 && driver.getBlock() != air) {
+                    while (y < 100 && driver.getState() != air) {
                         y++;
                         driver.incY();
                     }
                     if (y >= 100) {
                         y = 128;
                     } else {
-                        while (y > 0 && driver.getBlock() == air) {
+                        while (y > 0 && driver.getState() == air) {
                             y--;
                             driver.decY();
                         }
@@ -41,7 +41,7 @@ public class ChunkHeightmap {
                 for (int z = 0; z < 16; z++) {
                     int y = 255;
                     driver.current(x, y, z);
-                    while (y > 0 && driver.getBlock() != baseChar) {
+                    while (y > 0 && driver.getState() != baseChar) {
                         y--;
                         driver.decY();
                     }
@@ -53,7 +53,7 @@ public class ChunkHeightmap {
                 for (int z = 0; z < 16; z++) {
                     int y = 255;
                     driver.current(x, y, z);
-                    while (y > 0 && driver.getBlock() == air) {
+                    while (y > 0 && driver.getState() == air) {
                         y--;
                         driver.decY();
                     }

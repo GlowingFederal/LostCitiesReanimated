@@ -19,13 +19,13 @@ import java.util.*;
 public final class ChunkMaterialRecovery {
     private static final String KEY="LostCitiesMaterialRecovery";
     private final MaterialRecovery<LegacyState> materials;
-    private final boolean[] providerIds=new boolean[4096];
+    private final Set<Block> providers=Collections.newSetFromMap(new IdentityHashMap<Block,Boolean>());
     private boolean hasProviders;
     private final Map<LegacyState,String> fallbacks=new HashMap<>();
     ChunkMaterialRecovery(MaterialWorldData data){
         materials=LegacyMaterials.recovery(data.resolver().decisions());
-        for(String selected:data.resolver().decisions().values()){BlockSpec spec=BlockSpec.parse(selected);if(materials.contains(spec.id)){Block block=LegacyRegistries.BLOCKS.getValue(new net.minecraft.util.ResourceLocation(spec.id));if(block!=null){int id=Block.getIdFromBlock(block);if(id>=0&&id<providerIds.length){providerIds[id]=true;hasProviders=true;}}}}
-        for(int id=0;id<providerIds.length;id++)if(providerIds[id]){Block block=Block.getBlockById(id);for(int meta=0;meta<16;meta++)fallback(LegacyStates.state(block,meta));}
+        for(String selected:data.resolver().decisions().values()){BlockSpec spec=BlockSpec.parse(selected);if(materials.contains(spec.id)){Block block=LegacyRegistries.BLOCKS.getValue(new net.minecraft.util.ResourceLocation(spec.id));if(block!=null){int id=Block.getIdFromBlock(block);if(id>=0){providers.add(block);hasProviders=true;}}}}
+        for(Block block:providers)for(int meta=0;meta<16;meta++)fallback(LegacyStates.state(block,meta));
     }
     private String fallback(LegacyState state){
         if(fallbacks.containsKey(state))return fallbacks.get(state);
@@ -35,19 +35,19 @@ public final class ChunkMaterialRecovery {
         if(block instanceof BlockSlab)properties.put("type",block.renderAsNormalBlock()?"double":(meta&8)!=0?"top":"bottom");
         if(block instanceof BlockTrapDoor){properties.put("half",(meta&8)!=0?"top":"bottom");properties.put("open",String.valueOf((meta&4)!=0));}
         if(block instanceof BlockDoor){properties.put("half",(meta&8)!=0?"upper":"lower");if((meta&8)!=0)properties.put("hinge",(meta&1)!=0?"right":"left");else properties.put("open",String.valueOf((meta&4)!=0));}
-        boolean orientation=block instanceof BlockStairs||block instanceof BlockDoor||block instanceof BlockTrapDoor||block instanceof BlockFenceGate||LegacyStates.isUabBarrel(block)||block.getClass().getName().endsWith(".BlockLantern")||block.getClass().getName().endsWith(".BlockChain");
+        boolean orientation=block instanceof BlockChest||block instanceof BlockStairs||block instanceof BlockDoor||block instanceof BlockTrapDoor||block instanceof BlockFenceGate||LegacyStates.isUabBarrel(block)||block.getClass().getName().endsWith(".BlockLantern")||block.getClass().getName().endsWith(".BlockChain");
         String result=materials.fallback(state.toString(),properties,orientation?0:block instanceof BlockSlab?7:15);fallbacks.put(state,result);return result;
     }
     private NBTTagCompound snapshot(Chunk chunk,NBTTagCompound level){
         Map<LegacyState,List<Integer>> groups=new LinkedHashMap<>();Set<Integer> positions=new HashSet<>();
-        NBTTagList sections=level.getTagList("Sections",10);
-        if(hasProviders)for(int sectionIndex=0;sectionIndex<sections.tagCount();sectionIndex++){
-            NBTTagCompound section=sections.getCompoundTagAt(sectionIndex);byte[] ids=section.getByteArray("Blocks"),metadata=section.getByteArray("Data"),extra=section.getByteArray("Add");int base=section.getByte("Y")<<12;
-            if(ids.length!=4096||metadata.length!=2048)throw new IllegalArgumentException("Invalid legacy section arrays");
+        ExtendedBlockStorage[] sections=chunk.getBlockStorageArray();
+        if(hasProviders)for(int sectionIndex=0;sectionIndex<sections.length;sectionIndex++){
+            ExtendedBlockStorage section=sections[sectionIndex];if(section==null)continue;
             for(int index=0;index<4096;index++){
-                int shift=(index&1)*4,id=(ids[index]&255)|(extra.length==2048?((extra[index>>1]>>shift)&15)<<8:0);if(!providerIds[id])continue;
-                int meta=(metadata[index>>1]>>shift)&15;LegacyState state=LegacyStates.state(Block.getBlockById(id),meta);
-                if(fallback(state)==null)continue;int position=base|index;groups.computeIfAbsent(state,k->new ArrayList<>()).add(position);positions.add(position);
+                int x=index&15,z=(index>>4)&15,y=index>>8;
+                Block block=section.getBlockByExtId(x,y,z);if(!providers.contains(block))continue;
+                LegacyState state=LegacyStates.state(block,section.getExtBlockMetadata(x,y,z));
+                if(fallback(state)==null)continue;int position=(sectionIndex<<12)|index;groups.computeIfAbsent(state,k->new ArrayList<>()).add(position);positions.add(position);
             }
         }
         NBTTagCompound result=new NBTTagCompound();result.setInteger("Version",1);NBTTagList palette=new NBTTagList();

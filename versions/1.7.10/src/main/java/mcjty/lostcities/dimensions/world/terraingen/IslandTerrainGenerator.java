@@ -211,8 +211,8 @@ public class IslandTerrainGenerator {
 
     public void generate(int chunkX, int chunkZ, ChunkPrimer primer, LostCitiesTerrainGenerator terrainGenerator) {
         driver.setPrimer(primer);
-        char baseBlock = terrainGenerator.baseChar;
-        char air = LostCitiesTerrainGenerator.airChar;
+        int baseBlock = terrainGenerator.baseChar;
+        int air = LostCitiesTerrainGenerator.airChar;
 
         byte b0 = 2;
         int k = b0 + 1;
@@ -295,16 +295,16 @@ public class IslandTerrainGenerator {
 
     public final void genBiomeTerrain(BiomeGenBase biome, ChunkPrimer primer, int x, int z, double noise, LostCitiesTerrainGenerator terrainGenerator) {
         driver.setPrimer(primer);
-        char air = LostCitiesTerrainGenerator.airChar;
-        char baseBlock = terrainGenerator.baseChar;
-        char baseLiquid = air;//@LostCitiesTerrainGenerator.liquidChar;
+        int air = LostCitiesTerrainGenerator.airChar;
+        int baseBlock = terrainGenerator.baseChar;
+        int baseLiquid = air;//@LostCitiesTerrainGenerator.liquidChar;
 
         int topLevel = provider.getProfile().GROUNDLEVEL;
 
-        char fillerBlock = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(biome.fillerBlock));
-        char topBlock = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(biome.topBlock));
-        char block = topBlock;
-        char block1 = fillerBlock;
+        int fillerBlock = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(biome.fillerBlock));
+        int topBlock = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(biome.topBlock));
+        int block = topBlock;
+        int block1 = fillerBlock;
 
         int k = -1;
         int l = (int)(noise / 3.0D + 3.0D + provider.rand.nextDouble() * 0.25D);
@@ -318,7 +318,7 @@ public class IslandTerrainGenerator {
             if (height <= 2) {
                 driver.block(air);
             } else {
-                char currentBlock = driver.getBlock();
+                int currentBlock = driver.getState();
                 if (currentBlock == LostCitiesTerrainGenerator.bedrockChar && height <= 12) {
                     driver.block(air);
                     k = -1;
@@ -336,7 +336,7 @@ public class IslandTerrainGenerator {
 
                                 if (height < topLevel && (block == air)) { // @todo configure height!
                                     if (biome.getFloatTemperature(x,height,z) < 0.15F) {
-                                        block = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.ice));
+                                        block = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.ice));
                                     } else {
                                         block = baseBlock;  // No liquid since we are floating
                                     }
@@ -359,7 +359,7 @@ public class IslandTerrainGenerator {
 
                                 if (k == 0 && block1 == mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sand))) {
                                     k = provider.rand.nextInt(4) + Math.max(0, height - topLevel);
-                                    block1 = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sandstone));
+                                    block1 = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sandstone));
                                 }
                             }
                         }

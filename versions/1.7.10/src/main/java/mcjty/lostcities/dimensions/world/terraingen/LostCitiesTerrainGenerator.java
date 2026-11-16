@@ -39,41 +39,41 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
     private final int mainGroundLevel;
     private final int waterLevel;
     private boolean charsSetup = false;
-    public static char airChar;
-    public static char hardAirChar;
-    public static char glowstoneChar;
-    public static char gravelChar;
-    public static char glassChar;       // @todo: for space: depend on city style
-    public static char leavesChar;
-    public static char leaves2Char;
-    public static char leaves3Char;
-    public static char ironbarsChar;
-    public static char grassChar;
-    public static char bedrockChar;
-    public static char endportalChar;
-    public static char endportalFrameChar;
-    public static char goldBlockChar;
-    public static char diamondBlockChar;
+    public static int airChar;
+    public static int hardAirChar;
+    public static int glowstoneChar;
+    public static int gravelChar;
+    public static int glassChar;       // @todo: for space: depend on city style
+    public static int leavesChar;
+    public static int leaves2Char;
+    public static int leaves3Char;
+    public static int ironbarsChar;
+    public static int grassChar;
+    public static int bedrockChar;
+    public static int endportalChar;
+    public static int endportalFrameChar;
+    public static int goldBlockChar;
+    public static int diamondBlockChar;
 
-    public char liquidChar;
-    public char baseChar;
+    public int liquidChar;
+    public int baseChar;
 
-    private static Set<Character> rotatableChars = null;
-    private static Set<Character> railChars = null;
-    private static Set<Character> glassChars = null;
-    private static Set<Character> charactersNeedingTodo = null;
-    private static Set<Character> charactersNeedingLightingUpdate = null;
+    private static Set<Integer> rotatableChars = null;
+    private static Set<Integer> railChars = null;
+    private static Set<Integer> glassChars = null;
+    private static Set<Integer> charactersNeedingTodo = null;
+    private static Set<Integer> charactersNeedingLightingUpdate = null;
 
-    private Character street;
-    private Character streetBase;
-    private Character street2;
+    private Integer street;
+    private Integer streetBase;
+    private Integer street2;
     private int streetBorder;
 
     private NoiseGeneratorPerlin rubbleNoise;
     private NoiseGeneratorPerlin leavesNoise;
     private NoiseGeneratorPerlin ruinNoise;
 
-    private static char randomLeafs[] = null;
+    private static int randomLeafs[] = null;
 
     private IPrimerDriver driver;
     private IslandTerrainGenerator islandTerrainGenerator = new IslandTerrainGenerator(IslandTerrainGenerator.ISLANDS);
@@ -95,9 +95,9 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         spaceTerrainGenerator.setup(provider.worldObj, provider);
     }
 
-    public static char getRandomLeaf() {
+    public static int getRandomLeaf() {
         if (randomLeafs == null) {
-            randomLeafs = new char[128];
+            randomLeafs = new int[128];
             int i = 0;
             for (; i < 20; i++) {
                 randomLeafs[i] = leaves2Char;
@@ -112,7 +112,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         return randomLeafs[fastrand128()];
     }
 
-    public static Set<Character> getRailChars() {
+    public static Set<Integer> getRailChars() {
         if (railChars == null) {
             railChars = new HashSet<>();
             addStates(Blocks.rail, railChars);
@@ -121,7 +121,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         return railChars;
     }
 
-    public static Set<Character> getGlassChars() {
+    public static Set<Integer> getGlassChars() {
         if (glassChars == null) {
             glassChars = new HashSet<>();
             addStates(Blocks.glass, glassChars);
@@ -132,23 +132,23 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         return glassChars;
     }
 
-    public static Set<Character> getCharactersNeedingTodo() {
+    public static Set<Integer> getCharactersNeedingTodo() {
         if (charactersNeedingTodo == null) {
             charactersNeedingTodo = new HashSet<>();
             addStates(Blocks.sapling,charactersNeedingTodo);
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.ACACIA)));
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.BIRCH)));
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.OAK)));
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.SPRUCE)));
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.DARK_OAK)));
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.JUNGLE)));
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.red_flower)));
-            charactersNeedingTodo.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.yellow_flower)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.ACACIA)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.BIRCH)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.OAK)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.SPRUCE)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.DARK_OAK)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.sapling).withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.JUNGLE)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.red_flower)));
+            charactersNeedingTodo.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.yellow_flower)));
         }
         return charactersNeedingTodo;
     }
 
-    public static Set<Character> getCharactersNeedingLightingUpdate() {
+    public static Set<Integer> getCharactersNeedingLightingUpdate() {
         if (charactersNeedingLightingUpdate == null) {
             charactersNeedingLightingUpdate = new HashSet<>();
             for (String s : LostCityConfiguration.BLOCKS_REQUIRING_LIGHTING_UPDATES) {
@@ -161,7 +161,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         return charactersNeedingLightingUpdate;
     }
 
-    public static Set<Character> getRotatableChars() {
+    public static Set<Integer> getRotatableChars() {
         if (rotatableChars == null) {
             rotatableChars = new HashSet<>();
             addStates(Blocks.acacia_stairs, rotatableChars);
@@ -183,48 +183,48 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         return rotatableChars;
     }
 
-    private static void addStates(Block block, Set<Character> set) {
+    private static void addStates(Block block, Set<Integer> set) {
         for (int m = 0; m < 16; m++) {
             try {
                 LegacyState state = mcjty.lostcities.legacy.LegacyStates.state(block, m);
-                set.add((char) mcjty.lostcities.legacy.LegacyStates.IDS.get(state));
+                set.add(mcjty.lostcities.legacy.LegacyStates.IDS.get(state));
             } catch (Exception e) {
                 // Ignore
             }
         }
     }
 
-    public long captureState(){return ((long)g_seed<<32)|((long)baseChar<<16)|liquidChar;}
-    public void restoreState(long state){g_seed=(int)(state>>32);baseChar=(char)(state>>16);liquidChar=(char)state;}
+    public int[] captureState(){return new int[]{g_seed,baseChar,liquidChar};}
+    public void restoreState(int[] state){g_seed=state[0];baseChar=state[1];liquidChar=state[2];}
 
     public void setupChars(LostCityProfile profile) {
-        baseChar=(char)mcjty.lostcities.legacy.LegacyStates.IDS.get(profile.getBaseBlock());liquidChar=(char)mcjty.lostcities.legacy.LegacyStates.IDS.get(profile.getLiquidBlock());
+        baseChar=mcjty.lostcities.legacy.LegacyStates.IDS.get(profile.getBaseBlock());liquidChar=mcjty.lostcities.legacy.LegacyStates.IDS.get(profile.getLiquidBlock());
         if (!charsSetup) {
-            airChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.air));
-            hardAirChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.command_block));
-            glowstoneChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.glowstone));
-            gravelChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.gravel));
+            airChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.air));
+            hardAirChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.command_block));
+            glowstoneChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.glowstone));
+            gravelChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.gravel));
 
 
             // @todo
-            glassChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.glass));
+            glassChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.glass));
 
-            leavesChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.leaves)
+            leavesChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.leaves)
                     .withProperty(mcjty.lostcities.legacy.Properties.DECAYABLE, false));
-            leaves2Char = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.leaves)
+            leaves2Char = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.leaves)
                     .withProperty(mcjty.lostcities.legacy.Properties.DECAYABLE, false)
                     .withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.JUNGLE));
-            leaves3Char = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.leaves)
+            leaves3Char = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.leaves)
                     .withProperty(mcjty.lostcities.legacy.Properties.DECAYABLE, false)
                     .withProperty(mcjty.lostcities.legacy.Properties.WOOD, mcjty.lostcities.legacy.Wood.SPRUCE));
 
-            ironbarsChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.iron_bars));
-            grassChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.grass));
-            bedrockChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.bedrock));
-            endportalChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.end_portal));
-            endportalFrameChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.end_portal_frame));
-            goldBlockChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.gold_block));
-            diamondBlockChar = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.diamond_block));
+            ironbarsChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.iron_bars));
+            grassChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.grass));
+            bedrockChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.bedrock));
+            endportalChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.end_portal));
+            endportalFrameChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.end_portal_frame));
+            goldBlockChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.gold_block));
+            diamondBlockChar = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.diamond_block));
             charsSetup = true;
         }
     }
@@ -249,9 +249,9 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         // @todo this setup is not very clean
         CityStyle cityStyle = info.getCityStyle();
 
-        street = info.getCompiledPalette().get(cityStyle.getStreetBlock());
-        streetBase = info.getCompiledPalette().get(cityStyle.getStreetBaseBlock());
-        street2 = info.getCompiledPalette().get(cityStyle.getStreetVariantBlock());
+        street = info.getCompiledPalette().getState(cityStyle.getStreetBlock());
+        streetBase = info.getCompiledPalette().getState(cityStyle.getStreetBaseBlock());
+        street2 = info.getCompiledPalette().getState(cityStyle.getStreetVariantBlock());
         streetBorder = (16 - cityStyle.getStreetWidth()) / 2;
 
         if (info.isCity || (info.outsideChunk && info.hasBuilding)) {
@@ -304,7 +304,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
             public int maximumHeight(){return info.hasBuilding?info.getCityGroundLevel()+info.getNumFloors()*6+10:info.groundLevel+20;}
             public boolean biome(String selector){return mcjty.lostcities.compat.BiomeSupport.matches(BiomeInfo.getBiomeInfo(provider,info.coord).getBiomes()[55],selector);}
             public boolean block(int x,int y,int z,String selector){
-                mcjty.lostcities.legacy.LegacyState state=mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(driver.getBlock(x,y,z));
+                mcjty.lostcities.legacy.LegacyState state=mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(driver.getState(x,y,z));
                 if(selector.startsWith("#")){
                     String ore=selector.substring(selector.indexOf(':')+1);if(ore.equals("stone"))ore="stone";
                     net.minecraft.item.Item item=net.minecraft.item.Item.getItemFromBlock(state.getBlock());if(item==null)return false;
@@ -313,9 +313,9 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 }
                 return state.getBlock()==mcjty.lostcities.compat.LegacyMaterials.resolve(selector).getBlock();
             }
-            public boolean air(int x,int y,int z){return driver.getBlock(x,y,z)==airChar;}
-            public boolean seesSky(int x,int y,int z){for(int height=y+1;height<256;height++)if(driver.getBlock(x,height,z)!=airChar)return false;return true;}
-            public void place(int x,int y,int z,char character){Character block=palette.get(character);if(block==null)throw new IllegalArgumentException("Missing decoration palette character "+character);driver.current(x,y,z).block(block);}
+            public boolean air(int x,int y,int z){return driver.getState(x,y,z)==airChar;}
+            public boolean seesSky(int x,int y,int z){for(int height=y+1;height<256;height++)if(driver.getState(x,height,z)!=airChar)return false;return true;}
+            public void place(int x,int y,int z,char character){Integer block=palette.getState(character);if(block==null)throw new IllegalArgumentException("Missing decoration palette character "+character);driver.current(x,y,z).block(block);}
         });
     }
     private void generateModernScattered(BuildingInfo info){
@@ -345,11 +345,11 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                     CompiledPalette supportPalette=support.getLocalPalette()==null?palette:new CompiledPalette(palette,support.getLocalPalette());
                     for(int x=0;x<support.getXSize();x++)for(int z=0;z<support.getZSize();z++){
                         char character=support.getPaletteChar(x,0,z);if(character==' ')continue;
-                        Character material=supportPalette.get(character);if(material==null)throw new IllegalArgumentException("Missing scattered support material "+character);
+                        Integer material=supportPalette.getState(character);if(material==null)throw new IllegalArgumentException("Missing scattered support material "+character);
                         if(material==airChar||material==hardAirChar||material==liquidChar)continue;
-                        char block=mcjty.lostcities.compat.StateTransforms.transform(material,transform);
+                        int block=mcjty.lostcities.compat.StateTransforms.transform(material,transform);
                         int rx=transform.rotateX(x,z),rz=transform.rotateZ(x,z);
-                        for(int y=height-1;y>0;y--){char previous=driver.getBlock(rx,y,rz);if(previous!=airChar&&previous!=liquidChar)break;driver.current(rx,y,rz).block(block);}
+                        for(int y=height-1;y>0;y--){int previous=driver.getState(rx,y,rz);if(previous!=airChar&&previous!=liquidChar)break;driver.current(rx,y,rz).block(block);}
                     }
                 }else if(!fix.equals("none"))throw new IllegalArgumentException("Unknown scattered terrainfix "+fix);
             }
@@ -367,7 +367,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
             int height=info.groundLevel+6*level;if(!plan.opensRailing(info.chunkX,info.chunkZ,height))continue;
             for(int i=0;i<16;i++)for(int y=height+1;y<Math.min(256,height+16);y++){
                 int x=direction==1?15:direction==3?0:i,z=direction==0?0:direction==2?15:i;
-                if(driver.getBlock(x,y,z)==ironbarsChar)driver.current(x,y,z).block(airChar);
+                if(driver.getState(x,y,z)==ironbarsChar)driver.current(x,y,z).block(airChar);
             }
         }
     }
@@ -443,20 +443,20 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
             driver.current(idx);
             Map<String, Integer> map = pair.getRight();
 
-            char torch = driver.getBlock();
+            int torch = driver.getState();
             LegacyState torchState = mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(torch);
             if (map != null) {
                 int x = driver.getX();
                 int z = driver.getZ();
-                if (driver.getY() != 0 && driver.getBlockDown() != airChar) {
+                if (driver.getY() != 0 && driver.getStateDown() != airChar) {
                     driver.block(mcjty.lostcities.legacy.LegacyStates.state(torchState.getBlock(),map.get("up")));
-                } else if (x > 0 && driver.getBlockWest() != airChar) {
+                } else if (x > 0 && driver.getStateWest() != airChar) {
                     driver.block(mcjty.lostcities.legacy.LegacyStates.state(torchState.getBlock(),map.get("east")));
-                } else if (x < 15 && driver.getBlockEast() != airChar) {
+                } else if (x < 15 && driver.getStateEast() != airChar) {
                     driver.block(mcjty.lostcities.legacy.LegacyStates.state(torchState.getBlock(),map.get("west")));
-                } else if (z > 0 && driver.getBlockNorth() != airChar) {
+                } else if (z > 0 && driver.getStateNorth() != airChar) {
                     driver.block(mcjty.lostcities.legacy.LegacyStates.state(torchState.getBlock(),map.get("south")));
-                } else if (z < 15 && driver.getBlockSouth() != airChar) {
+                } else if (z < 15 && driver.getStateSouth() != airChar) {
                     driver.block(mcjty.lostcities.legacy.LegacyStates.state(torchState.getBlock(),map.get("north")));
                 }
             }
@@ -606,11 +606,11 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                         for (int x = 0; x < 16; x++) {
                             driver.current(x, cury, 0);
                             for (int z = 0; z < 16; z++) {
-                                char d = driver.getBlock();
+                                int d = driver.getState();
                                 if (d != airChar || cury <= info.waterLevel) {
                                     float damage = damageArea.getDamage(cx + x, cury, cz + z) * damageFactor;
                                     if (damage >= 0.001) {
-                                        Character newd = damageArea.damageBlock(d, provider, cury, damage, info.getCompiledPalette(), liquidChar);
+                                        Integer newd = damageArea.damageBlock(d, provider, cury, damage, info.getCompiledPalette(), liquidChar);
                                         if (newd != d) {
                                             driver.block(newd);
                                             cntDamaged++;
@@ -639,12 +639,12 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 //                        for (int z = 0; z < 16; z++) {
 //                            int index = (x << 12) | (z << 8) + yy * 16;
 //                            for (int y = 0; y < 16; y++) {
-//                                char d = primer.data[index];
+//                                int d = primer.data[index];
 //                                if (d != airChar || (index & 0xff) < waterLevel) {
 //                                    int cury = yy * 16 + y;
 //                                    float damage = damageArea.getDamage(cx + x, cury, cz + z);
 //                                    if (damage >= 0.001) {
-//                                        Character newd = damageArea.damageBlock(d, provider, cury, damage, info.getCompiledPalette());
+//                                        Integer newd = damageArea.damageBlock(d, provider, cury, damage, info.getCompiledPalette());
 //                                        if (newd != d) {
 //                                            primer.data[index] = newd;
 //                                        }
@@ -724,14 +724,14 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         Character support = part.getMetaChar("support");boolean templateSupport=support!=null;
         if(mcjty.lostcities.assets.AssetContext.modern()&&support==null){String name=worldSetting("highwaysupportpart");if(info.profile.HIGHWAY_SUPPORTS&&name!=null){supportPart(info,name,transform,highwayGroundLevel-1);return;}String value=worldSetting("highwaysupport");if(value!=null)support=value.charAt(0);}
         if(info.profile.HIGHWAY_SUPPORTS&&support!=null){
-            Character selected=(templateSupport?partPalette(info,part):info.getCompiledPalette()).get(support);if(selected==null)throw new IllegalArgumentException("Missing highway support material "+support);
-            char material=mcjty.lostcities.compat.StateTransforms.transform(selected,transform);
+            Integer selected=(templateSupport?partPalette(info,part):info.getCompiledPalette()).getState(support);if(selected==null)throw new IllegalArgumentException("Missing highway support material "+support);
+            int material=mcjty.lostcities.compat.StateTransforms.transform(selected,transform);
             blockSupport(material,transform.rotateX(0,15),transform.rotateZ(0,15),highwayGroundLevel-1,40);
             blockSupport(material,transform.rotateX(0,0),transform.rotateZ(0,0),highwayGroundLevel-1,40);
             if(suffix.equals("_bend")||suffix.equals("_t"))blockSupport(material,transform.rotateX(15,0),transform.rotateZ(15,0),highwayGroundLevel-1,40);
         }
     }
-    private void blockSupport(char material,int x,int z,int top,int depth){for(int y=top;y>=0&&y>top-depth;y--){char previous=driver.getBlock(x,y,z);if(previous!=airChar&&previous!=liquidChar)break;driver.current(x,y,z).block(material);}}
+    private void blockSupport(int material,int x,int z,int top,int depth){for(int y=top;y>=0&&y>top-depth;y--){int previous=driver.getState(x,y,z);if(previous!=airChar&&previous!=liquidChar)break;driver.current(x,y,z).block(material);}}
 
     private void clearRange(BuildingInfo info, int x, int z, int height1, int height2, boolean dowater) {
         if (dowater) {
@@ -768,7 +768,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         CompiledPalette palette=partPalette(info,part);int slices=part.getSliceCount();
         for(int x=0;x<part.getXSize();x++)for(int z=0;z<part.getZSize();z++){
             char[] column=part.getVSlice(x,z);if(column==null)continue;int rx=transform.rotateX(x,z),rz=transform.rotateZ(x,z),partY=slices-1;
-            for(int y=Math.min(255,top);y>=0;y--){char previous=driver.getBlock(rx,y,rz);if(previous!=airChar&&previous!=liquidChar)break;Character block=palette.get(column[partY]);if(block==null)throw new IllegalArgumentException("Missing support material "+column[partY]+" in "+name);if(block!=airChar&&block!=hardAirChar)driver.current(rx,y,rz).block(mcjty.lostcities.compat.StateTransforms.transform(block,transform));if(--partY<0)partY=slices-1;}
+            for(int y=Math.min(255,top);y>=0;y--){int previous=driver.getState(rx,y,rz);if(previous!=airChar&&previous!=liquidChar)break;Integer block=palette.getState(column[partY]);if(block==null)throw new IllegalArgumentException("Missing support material "+column[partY]+" in "+name);if(block!=airChar&&block!=hardAirChar)driver.current(rx,y,rz).block(mcjty.lostcities.compat.StateTransforms.transform(block,transform));if(--partY<0)partY=slices-1;}
         }
     }
     private String worldSetting(String key){com.google.gson.JsonObject world=mcjty.lostcities.assets.ModernAssetPack.definition("worldstyles",provider.getProfile().getWorldStyle());return world!=null&&world.has(key)?world.get(key).getAsString():null;}
@@ -778,7 +778,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         if(!info.profile.BRIDGE_SUPPORTS)return;
         Character support=part.getMetaChar("support");String supportPart=null;CompiledPalette palette=partPalette(info,part);
         if(support==null){com.google.gson.JsonElement citySupport=info.getCityStyle().setting("bridgesupport"),cityPart=info.getCityStyle().setting("bridgesupportpart");String value=citySupport==null?worldSetting("bridgesupport"):citySupport.getAsString();if(value!=null)support=value.charAt(0);supportPart=cityPart==null?(citySupport==null?worldSetting("bridgesupportpart"):null):cityPart.getAsString();palette=info.getCompiledPalette();}
-        Character material=support==null?null:palette.get(support);if(support!=null&&material==null)throw new IllegalArgumentException("Missing bridge support material "+support);
+        Integer material=support==null?null:palette.getState(support);if(support!=null&&material==null)throw new IllegalArgumentException("Missing bridge support material "+support);
         BuildingInfo minimum=orientation.getMinDir().get(info),maximum=orientation.getMaxDir().get(info);boolean first=minimum.hasBridge(provider,orientation)==null,last=maximum.hasBridge(provider,orientation)==null;
         if(!first&&!last){if(supportPart!=null)supportPart(info,supportPart,transform,height-1);else if(material!=null)for(int y=Math.max(0,info.waterLevel-10);y<=height;y++)for(int x=7;x<=8;x++)for(int z=7;z<=8;z++)driver.current(x,y,z).block(material);}
         if(material!=null)for(int i=6;i<=9;i++){if(first)driver.current(orientation==Orientation.X?0:i,height,orientation==Orientation.X?i:0).block(material);if(last)driver.current(orientation==Orientation.X?15:i,height,orientation==Orientation.X?i:15).block(material);}
@@ -792,7 +792,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 int l = 0;
                 while (l < bt.getSliceCount()) {
                     Character c = orientation == Orientation.X ? bt.getPaletteChar(x, l, z) : bt.getPaletteChar(z, l, x); // @todo general rotation system?
-                    Character b = info.getCompiledPalette().get(c);
+                    Integer b = info.getCompiledPalette().getState(c);
                     CompiledPalette.Info inf = compiledPalette.getInfo(c);
                     if (inf != null) {
                         Map<String, Integer> orientations = inf.getTorchOrientations();
@@ -812,7 +812,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
         Character support = bt.getMetaChar("support");
         if (info.profile.BRIDGE_SUPPORTS && support != null) {
-            char sup = compiledPalette.get(support);
+            int sup = compiledPalette.getState(support);
             BuildingInfo minDir = orientation.getMinDir().get(info);
             BuildingInfo maxDir = orientation.getMaxDir().get(info);
             if (minDir.hasBridge(provider, orientation) != null && maxDir.hasBridge(provider, orientation) != null) {
@@ -970,7 +970,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
     private void flattenChunkBorder(BuildingInfo info, int x, int offset, int z, Random rand, int level) {
         driver.current(x, 0, z);
         for (int y = 0; y <= (level - offset - rand.nextInt(2)); y++) {
-            char b = driver.getBlock();
+            int b = driver.getState();
             if (b != bedrockChar) {
                 driver.add(baseChar);
             } else {
@@ -1100,24 +1100,24 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 RailChunkType type1 = info.getXmin().getRailInfo().getType();
                 RailChunkType type2 = info.getXmax().getRailInfo().getType();
                 if (!type1.isStation() && !type2.isStation()) {
-                    if (driver.getBlock(3, height + 2, 3) == liquidChar &&
-                            driver.getBlock(12, height + 2, 3) == liquidChar &&
-                            driver.getBlock(3, height + 2, 12) == liquidChar &&
-                            driver.getBlock(12, height + 2, 12) == liquidChar &&
-                            driver.getBlock(3, height + 4, 7) == liquidChar &&
-                            driver.getBlock(12, height + 4, 8) == liquidChar) {
+                    if (driver.getState(3, height + 2, 3) == liquidChar &&
+                            driver.getState(12, height + 2, 3) == liquidChar &&
+                            driver.getState(3, height + 2, 12) == liquidChar &&
+                            driver.getState(12, height + 2, 12) == liquidChar &&
+                            driver.getState(3, height + 4, 7) == liquidChar &&
+                            driver.getState(12, height + 4, 8) == liquidChar) {
                         part = transportPart("rails_horizontal_water");
                     }
                 }
                 break;
             case VERTICAL:
                 part = transportPart("rails_vertical");
-                if (driver.getBlock(3, height + 2, 3) == liquidChar &&
-                        driver.getBlock(12, height + 2, 3) == liquidChar &&
-                        driver.getBlock(3, height + 2, 12) == liquidChar &&
-                        driver.getBlock(12, height + 2, 12) == liquidChar &&
-                        driver.getBlock(3, height + 4, 7) == liquidChar &&
-                        driver.getBlock(12, height + 4, 8) == liquidChar) {
+                if (driver.getState(3, height + 2, 3) == liquidChar &&
+                        driver.getState(12, height + 2, 3) == liquidChar &&
+                        driver.getState(3, height + 2, 12) == liquidChar &&
+                        driver.getState(12, height + 2, 12) == liquidChar &&
+                        driver.getState(3, height + 4, 7) == liquidChar &&
+                        driver.getState(12, height + 4, 8) == liquidChar) {
                     part = transportPart("rails_vertical_water");
                 }
                 if (railInfo.getDirection() == Railway.RailDirection.EAST) {
@@ -1156,7 +1156,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         generatePart(info, part, transform, 0, height, 0, false);
 
         Character railMainBlock = info.getCityStyle().getRailMainBlock();
-        char rail = info.getCompiledPalette().get(railMainBlock);
+        int rail = info.getCompiledPalette().getState(railMainBlock);
 
         if (type == RailChunkType.HORIZONTAL) {
             // If there is a rail dungeon north or south we must make a connection here
@@ -1227,11 +1227,11 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                         for (int x = 0; x < 16; x++) {
                             for (int y = height + 1; y < height + part.getSliceCount(); y++) {
                                 driver.current(x, y, 5);
-                                if (getRailChars().contains(driver.getBlock())) {
+                                if (getRailChars().contains(driver.getState())) {
                                     driver.block(rail);
                                 }
                                 driver.current(x, y, 9);;
-                                if (getRailChars().contains(driver.getBlock())) {
+                                if (getRailChars().contains(driver.getState())) {
                                     driver.block(rail);
                                 }
                             }
@@ -1240,7 +1240,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                         for (int x = 0; x < 16; x++) {
                             for (int y = height + 1; y < height + part.getSliceCount(); y++) {
                                 driver.current(x, y, 7);
-                                if (getRailChars().contains(driver.getBlock())) {
+                                if (getRailChars().contains(driver.getState())) {
                                     driver.block(rail);
                                 }
                             }
@@ -1402,7 +1402,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
             return false;
         }
 
-        public void scan(BuildingInfo info, IPrimerDriver driver, char air, char liquid, BlockPos pos) {
+        public void scan(BuildingInfo info, IPrimerDriver driver, int air, int liquid, BlockPos pos) {
             DamageArea damageArea = info.getDamageArea();
             avgdamage = 0;
             cntMindamage = 0;
@@ -1422,7 +1422,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                     continue;
                 }
                 driver.current(x, y, z);
-                if (driver.getBlock() == air || driver.getBlock() == liquid) {
+                if (driver.getState() == air || driver.getState() == liquid) {
                     continue;
                 }
                 connectedBlocks.add(index);
@@ -1484,7 +1484,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
             for (int z = 0; z < 16; z++) {
                 driver.current(x, start, z);
                 for (int y = start; y < end; y++) {
-                    char p = driver.getBlock();
+                    int p = driver.getState();
                     if (p != airChar && p != liquidChar) {
                         Blob blob = findBlob(blobs, driver.getCurrent());
                         if (blob == null) {
@@ -1528,11 +1528,11 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         });
         for (IIndex index : blocksToMove.connectedBlocks) {
             driver.current(index);
-            char c = driver.getBlock();
+            int c = driver.getState();
             driver.block(((driver.getY()) < info.waterLevel) ? liquidChar : airChar);
             driver.decY();
             int y = driver.getY();
-            while (y > 2 && (blocksToMove.contains(driver.getCurrent()) || driver.getBlock() == airChar || driver.getBlock() == liquidChar)) {
+            while (y > 2 && (blocksToMove.contains(driver.getCurrent()) || driver.getState() == airChar || driver.getState() == liquidChar)) {
                 driver.decY();
                 y--;
             }
@@ -1559,19 +1559,19 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                         // whoops, it's air all the way down. No rubble here
                         continue;
                     }
-                    char c = driver.getBlockDown();
+                    int c = driver.getStateDown();
                     if (c != airChar && c != liquidChar) {
                         for (int i = 0; i < vr; i++) {
-                            if (driver.getBlock() == airChar || driver.getBlock() == liquidChar) {
+                            if (driver.getState() == airChar || driver.getState() == liquidChar) {
                                 driver.add(baseChar);
                             } else {
                                 driver.incY();
                             }
                         }
                     }
-                    if (driver.getBlockDown() == baseChar) {
+                    if (driver.getStateDown() == baseChar) {
                         for (int i = 0; i < vl; i++) {
-                            if (driver.getBlock() == airChar || driver.getBlock() == liquidChar) {
+                            if (driver.getState() == airChar || driver.getState() == liquidChar) {
                                 driver.add(getRandomLeaf());
                             } else {
                                 driver.incY();
@@ -1654,13 +1654,13 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                     vl = (int) (info.profile.RUBBLE_LEAVE_SCALE < 0.01f ? 0 : leavesBuffer[x + z * 16] / info.profile.RUBBLE_LEAVE_SCALE);
                 }
                 while (height > 0) {
-                    Character damage = info.getCompiledPalette().canBeDamagedToIronBars(driver.getBlock());
-                    char c = driver.getBlockDown();
+                    Integer damage = info.getCompiledPalette().getDamagedState(driver.getState());
+                    int c = driver.getStateDown();
                     if ((damage != null || c == ironbarsChar) && c != airChar && c != liquidChar && provider.rand.nextFloat() < .2f) {
                         driver.add(ironbarsChar);
                     } else {
                         if (vl > 0) {
-                            c = driver.getBlockDown();
+                            c = driver.getStateDown();
                             while (c == airChar || c == liquidChar) {
                                 driver.decY();
                                 if (driver.getY() == 0) {
@@ -1668,7 +1668,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                                     continue zLoop;
                                 }
                                 height++;   // Make sure we keep on filling with air a bit longer because we are lowering here
-                                c = driver.getBlockDown();
+                                c = driver.getStateDown();
                             }
                             driver.add(getRandomLeaf());
                             vl--;
@@ -1701,7 +1701,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
             boolean elevated = info.isElevatedParkSection();
             if (elevated) {
                 Character elevationBlock = info.getCityStyle().getParkElevationBlock();
-                char elevation = info.getCompiledPalette().get(elevationBlock);
+                int elevation = info.getCompiledPalette().getState(elevationBlock);
                 streetType = BuildingInfo.StreetType.PARK;
                 for (int x = 0; x < 16; ++x) {
                     driver.current(x, height, 0);
@@ -1811,7 +1811,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
             for (int z = 0; z < 16; ++z) {
                 int y = lowestLevel - 1;
                 driver.current(x, y, z);
-                while (y > 1 && driver.getBlock() == airChar) {
+                while (y > 1 && driver.getState() == airChar) {
                     driver.block(baseChar).decY();
                     y--;
                 }
@@ -1823,7 +1823,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
      * Fill a main street block with base blocks and border blocks at the bottom
      */
     private void fillMainStreetBlock(BuildingInfo info, Character borderBlock, int offset) {
-        char border = info.getCompiledPalette().get(borderBlock);
+        int border = info.getCompiledPalette().getState(borderBlock);
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
                 driver.setBlockRange(x, info.getCityGroundLevel() - (offset - 1), z, info.getCityGroundLevel(), baseChar);
@@ -1838,7 +1838,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
     private void generateBorder(BuildingInfo info, boolean canDoParks, int x, int z, BuildingInfo adjacent) {
         Character borderBlock = info.getCityStyle().getBorderBlock();
         Character wallBlock = info.getCityStyle().getWallBlock();
-        char wall = info.getCompiledPalette().get(wallBlock);
+        int wall = info.getCompiledPalette().getState(wallBlock);
 
         switch (info.profile.LANDSCAPE_TYPE) {
             case DEFAULT:
@@ -1887,18 +1887,18 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
     /**
      * Generate a column of wall blocks (and stone below that in water)
      */
-    private void generateBorderSupport(BuildingInfo info, char wall, int x, int z, int offset) {
+    private void generateBorderSupport(BuildingInfo info, int wall, int x, int z, int offset) {
         ChunkHeightmap heightmap = provider.getHeightmap(info.chunkX, info.chunkZ);
         int height = heightmap.getHeight(x, z);
         if (height > 1) {
             // None void
             int y = info.getCityGroundLevel() - offset - 1;
             driver.current(x, y, z);
-            while (y > 1 && driver.getBlock() == airChar) {
+            while (y > 1 && driver.getState() == airChar) {
                 driver.block(wall).decY();
                 y--;
             }
-            while (y > 1 && driver.getBlock() == liquidChar) {
+            while (y > 1 && driver.getState() == liquidChar) {
                 driver.block(baseChar).decY();
                 y--;
             }
@@ -1913,9 +1913,9 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
     private void generateCorridors(BuildingInfo info, boolean xRail, boolean zRail) {
         LegacyState railx = mcjty.lostcities.legacy.LegacyStates.state(Blocks.rail).withProperty(mcjty.lostcities.legacy.Properties.RAIL, mcjty.lostcities.legacy.RailShape.EAST_WEST);
-        char railxC = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(railx);
+        int railxC = mcjty.lostcities.legacy.LegacyStates.IDS.get(railx);
         LegacyState railz = mcjty.lostcities.legacy.LegacyStates.state(Blocks.rail);
-        char railzC = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(railz);
+        int railzC = mcjty.lostcities.legacy.LegacyStates.IDS.get(railz);
 
         Character corridorRoofBlock = info.getCityStyle().getCorridorRoofBlock();
         Character corridorGlassBlock = info.getCityStyle().getCorridorGlassBlock();
@@ -1923,7 +1923,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
-                char b;
+                int b;
                 if ((xRail && z >= 7 && z <= 10) || (zRail && x >= 7 && x <= 10)) {
                     int height = info.groundLevel - 5;
                     if (xRail && z == 10) {
@@ -1936,11 +1936,11 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                     driver.current(x, height, z).add(b).add(airChar).add(airChar);
 
                     if ((xRail && x == 7 && (z == 8 || z == 9)) || (zRail && z == 7 && (x == 8 || x == 9))) {
-                        char glass = palette.get(corridorGlassBlock);
+                        int glass = palette.getState(corridorGlassBlock);
                         info.addLightingUpdateTodo(new BlockPos(info.chunkX*16+x, height, info.chunkZ*16+z));
                         driver.add(glass).add(glowstoneChar);
                     } else {
-                        char roof = palette.get(corridorRoofBlock);
+                        int roof = palette.getState(corridorRoofBlock);
                         driver.add(roof).add(roof);
                     }
                 } else {
@@ -1958,7 +1958,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 zLoop: for (int z = 0; z < 16; z++) {
                     driver.current(x, height, z);
                     // @todo can be more optimal? Only go down to non air in case random succeeds?
-                    while (driver.getBlockDown() == airChar) {
+                    while (driver.getStateDown() == airChar) {
                         driver.decY();
                         if (driver.getY() == 0) {
                             // whoops, it's air all the way down. No leaf blocks here
@@ -1979,7 +1979,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 zLoop: for (int z = 0; z < 16; z++) {
                     driver.current(x, height, z);
                     // @todo can be more optimal? Only go down to non air in case random succeeds?
-                    while (driver.getBlockDown() == airChar) {
+                    while (driver.getStateDown() == airChar) {
                         driver.decY();
                         if (driver.getY() == 0) {
                             // whoops, it's air all the way down. No leaf blocks here
@@ -2000,7 +2000,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 xLoop: for (int x = 0; x < 16; x++) {
                     driver.current(x, height, z);
                     // @todo can be more optimal? Only go down to non air in case random succeeds?
-                    while (driver.getBlockDown() == airChar) {
+                    while (driver.getStateDown() == airChar) {
                         driver.decY();
                         if (driver.getY() == 0) {
                             // whoops, it's air all the way down. No leaf blocks here
@@ -2021,7 +2021,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 xLoop: for (int x = 0; x < 16; x++) {
                     driver.current(x, height, z);
                     // @todo can be more optimal? Only go down to non air in case random succeeds?
-                    while (driver.getBlockDown() == airChar) {
+                    while (driver.getStateDown() == airChar) {
                         driver.decY();
                         if (driver.getY() == 0) {
                             // whoops, it's air all the way down. No leaf blocks here
@@ -2041,8 +2041,8 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
     private void generateParkSection(BuildingInfo info, int height, boolean elevated) {
         Character material=mcjty.lostcities.assets.AssetContext.modern()?info.getCityStyle().getGrassBlock():null;
-        java.util.function.Supplier<Character> grass=material==null?()->grassChar:()->info.getCompiledPalette().get(material);
-        char b;
+        java.util.function.Supplier<Integer> grass=material==null?()->grassChar:()->info.getCompiledPalette().getState(material);
+        int b;
         boolean el00 = info.getXmin().getZmin().isElevatedParkSection();
         boolean el10 = info.getZmin().isElevatedParkSection();
         boolean el20 = info.getXmax().getZmin().isElevatedParkSection();
@@ -2099,7 +2099,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
     }
 
     private void generateFullStreetSection(int height) {
-        char b;
+        int b;
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
                 if (isSide(x, z)) {
@@ -2133,9 +2133,9 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
     private void generateNormalStreetSection(BuildingInfo info, int height) {
         if(mcjty.lostcities.assets.AssetContext.modern()&&info.profile.modern.streets){generateModernStreet(info,height,false);return;}
-//        char defaultStreet = info.profile.isFloating() ? street2 : streetBase;
-        char defaultStreet = streetBase;
-        char b;
+//        int defaultStreet = info.profile.isFloating() ? street2 : streetBase;
+        int defaultStreet = streetBase;
+        int b;
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
                 b = defaultStreet;
@@ -2231,7 +2231,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         if(!provider.getProfile().isSpheres())return;
         CitySphere sphere=CitySphere.getCitySphere(x,z,provider);if(!sphere.isEnabled())return;CitySphere.initSphere(sphere,provider);
         LostCityProfile profile=provider.getProfile(),outside=provider.getOutsideProfile();
-        mcjty.lostcities.core.SphereShell.generate(new mcjty.lostcities.core.SphereShell.Blocks(){public char get(int xx,int y,int zz){return primer.data[(xx<<12)|(zz<<8)|y];}public void set(int xx,int y,int zz,char block){primer.data[(xx<<12)|(zz<<8)|y]=block;}},sphere.getCenterPos().getX()-x*16,profile.GROUNDLEVEL,sphere.getCenterPos().getZ()-z*16,(int)sphere.getRadius(),sphere.getGlassBlock(),sphere.getSideBlock(),airChar,liquidChar,profile.GROUNDLEVEL-profile.WATERLEVEL_OFFSET,profile.CITYSPHERE_LANDSCAPE_OUTSIDE?outside.GROUNDLEVEL-outside.WATERLEVEL_OFFSET:-1,profile.CITYSPHERE_CLEARABOVE,profile.CITYSPHERE_CLEARABOVE_UNTIL_AIR,profile.CITYSPHERE_CLEARBELOW,profile.CITYSPHERE_CLEARBELOW_UNTIL_AIR,false);
+        mcjty.lostcities.core.SphereShell.generate(new mcjty.lostcities.core.SphereShell.IntBlocks(){public int get(int xx,int y,int zz){return primer.data[(xx<<12)|(zz<<8)|y];}public void set(int xx,int y,int zz,int block){primer.data[(xx<<12)|(zz<<8)|y]=block;}},sphere.getCenterPos().getX()-x*16,profile.GROUNDLEVEL,sphere.getCenterPos().getZ()-z*16,(int)sphere.getRadius(),sphere.getGlassBlock(),sphere.getSideBlock(),airChar,liquidChar,profile.GROUNDLEVEL-profile.WATERLEVEL_OFFSET,profile.CITYSPHERE_LANDSCAPE_OUTSIDE?outside.GROUNDLEVEL-outside.WATERLEVEL_OFFSET:-1,profile.CITYSPHERE_CLEARABOVE,profile.CITYSPHERE_CLEARABOVE_UNTIL_AIR,profile.CITYSPHERE_CLEARBELOW,profile.CITYSPHERE_CLEARBELOW_UNTIL_AIR,false);
     }
     private enum AirMode { AIR,WATERLEVEL,VOID }
     private int generatePart(BuildingInfo info,IBuildingPart part,Transform transform,int ox,int oy,int oz,boolean water){return generatePart(info,part,transform,ox,oy,oz,water?AirMode.WATERLEVEL:AirMode.AIR);}
@@ -2256,7 +2256,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
         for (int x = 0; x < part.getXSize(); x++) {
             for (int z = 0; z < part.getZSize(); z++) {
-                char[] vs = part.getVSlice(x, z);
+                char[] vs=part.getVSlice(x, z);
                 if (vs != null) {
                     int rx = ox + transform.rotateX(x, z);
                     int rz = oz + transform.rotateZ(x, z);
@@ -2265,7 +2265,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                     for (int y = 0; y < len; y++) {
                         if(oy+y<0||oy+y>255){driver.incY();continue;}
                         char c = vs[y];
-                        Character b = compiledPalette.get(c);
+                        Integer b = compiledPalette.getState(c);
                         if (b == null) {
                             throw new RuntimeException("Could not find entry '" + c + "' in the palette for part '" + part.getName() + "'!");
                         }
@@ -2273,7 +2273,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                         CompiledPalette.Info inf = compiledPalette.getInfo(c);
 
                         if (transform != Transform.ROTATE_NONE && b!=airChar && b!=hardAirChar && b!=liquidChar) b=mcjty.lostcities.compat.StateTransforms.transform(b,transform);
-                        if(inf!=null&&inf.isSingleContainer()&&((info.chunkX*16+rx+info.chunkZ*16+rz)&1)!=0){LegacyState state=mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(b);if(state.getBlock()==Blocks.chest)b=(char)mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.trapped_chest,state.meta));}
+                        if(inf!=null&&inf.isSingleContainer()&&((info.chunkX*16+rx+info.chunkZ*16+rz)&1)!=0){LegacyState state=mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(b);if(state.getBlock()==Blocks.chest)b=mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(Blocks.trapped_chest,state.meta));}
                         // We don't replace the world where the part is empty (air)
                         if (b != airChar) {
                             if (b == liquidChar) {
@@ -2347,7 +2347,7 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
     private void generateDebrisFromChunk(Random rand, BuildingInfo info, BuildingInfo adjacentInfo, BiFunction<Integer, Integer, Float> locationFactor) {
         if (adjacentInfo.hasBuilding) {
-            char filler = adjacentInfo.getCompiledPalette().get(adjacentInfo.getBuilding().getFillerBlock());
+            int filler = adjacentInfo.getCompiledPalette().getState(adjacentInfo.getBuilding().getFillerBlock());
             float damageFactor = adjacentInfo.getDamageArea().getDamageFactor();
             if (damageFactor > .5f) {
                 // An estimate of the amount of blocks
@@ -2362,12 +2362,12 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                     int z = rand.nextInt(16);
                     if (rand.nextFloat() < locationFactor.apply(x, z)) {
                         driver.current(x, h, z);
-                        while (h > 0 && (driver.getBlock() == airChar || driver.getBlock() == liquidChar)) {
+                        while (h > 0 && (driver.getState() == airChar || driver.getState() == liquidChar)) {
                             h--;
                             driver.decY();
                         }
                         // Fix for FLOATING // @todo!
-                        char b;
+                        int b;
                         switch (rand.nextInt(5)) {
                             case 0:
                                 b = ironbarsChar;
@@ -2418,12 +2418,12 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
 
     private void setBlocksFromPalette(int x, int y, int z, int y2, CompiledPalette palette, char character) {
         if (palette.isSimple(character)) {
-            char b = palette.get(character);
+            int b = palette.getState(character);
             driver.setBlockRangeSafe(x, y, z, y2, b);
         } else {
             driver.current(x, y, z);
             while (y < y2) {
-                driver.add(palette.get(character));
+                driver.add(palette.getState(character));
                 y++;
             }
         }
@@ -2468,14 +2468,14 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                         int y = lowestLevel - 10;
                         driver.current(x, y, z);
                         while (y < lowestLevel) {
-                            driver.add(palette.get(borderBlock));
+                            driver.add(palette.getState(borderBlock));
                             y++;
                         }
                     } else if ((info.profile.isDefault()||info.profile.isVoidSpheres())) {
                         driver.setBlockRange(x, info.profile.BEDROCK_LAYER, z, lowestLevel, baseChar);
                     }
-                    if (driver.getBlock(x, lowestLevel, z) == airChar) {
-                        char filler = palette.get(fillerBlock);
+                    if (driver.getState(x, lowestLevel, z) == airChar) {
+                        int filler = palette.getState(fillerBlock);
                         driver.current(x, lowestLevel, z).block(filler); // There is nothing below so we fill this with the filler
                     }
 
@@ -2532,11 +2532,11 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
                 int y = lowestLevel - 1;
                 driver.current(x, y, z);
                 if (isSide(x, z)) {
-                    while (y > 1 && driver.getBlock() == airChar) {
-                        driver.block(info.getCompiledPalette().get(borderBlock)).decY();
+                    while (y > 1 && driver.getState() == airChar) {
+                        driver.block(info.getCompiledPalette().getState(borderBlock)).decY();
                     }
                 } else {
-                    while (y > 1 && driver.getBlock() == airChar) {
+                    while (y > 1 && driver.getState() == airChar) {
                         driver.block(baseChar).decY();
                     }
                 }
@@ -2544,17 +2544,17 @@ public class LostCitiesTerrainGenerator extends NormalTerrainGenerator {
         }
     }
 
-    private char getDoor(Block door, boolean upper, boolean left, Facing facing) {
+    private int getDoor(Block door, boolean upper, boolean left, Facing facing) {
         int metadata=upper?(8|(left?0:1)):0;
         LegacyState state=mcjty.lostcities.legacy.LegacyStates.state(door,metadata);
         if(!upper)state=mcjty.lostcities.legacy.LegacyStates.withFacing(state,facing.name().toLowerCase(java.util.Locale.ROOT));
-        return (char)mcjty.lostcities.legacy.LegacyStates.IDS.get(state);
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(state);
     }
 
     private void generateDoors(BuildingInfo info, int height, int f) {
         if(!info.getBuilding().allowsDoors())return;
 
-        char filler = info.getCompiledPalette().get(info.getBuilding().getFillerBlock());
+        int filler = info.getCompiledPalette().getState(info.getBuilding().getFillerBlock());
 
         height--;       // Start generating doors one below for the filler
 

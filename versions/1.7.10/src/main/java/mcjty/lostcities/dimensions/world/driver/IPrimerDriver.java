@@ -36,28 +36,45 @@ public interface IPrimerDriver {
 
     IIndex getIndex(int x, int y, int z);
 
-    void setBlockRange(int x, int y, int z, int y2, char c);
+    default void setBlockRange(int x,int y,int z,int y2,int c){setBlockRange(x,y,z,y2,nativeChar(c));}
 
-    void setBlockRangeSafe(int x, int y, int z, int y2, char c);
+    default void setBlockRangeSafe(int x,int y,int z,int y2,int c){setBlockRangeSafe(x,y,z,y2,nativeChar(c));}
 
     /// Set a block at the current position
-    IPrimerDriver block(char c);
+    default IPrimerDriver block(int c){return block(nativeChar(c));}
 
     /// Set a block at the current position
     IPrimerDriver block(LegacyState c);
 
     /// Set a block at the current position and increase the height with 1
-    IPrimerDriver add(char c);
+    default IPrimerDriver add(int c){return add(nativeChar(c));}
 
-    char getBlock();
+    default int getState(){return getBlock();}
 
-    char getBlockDown();
-    char getBlockEast();
-    char getBlockWest();
-    char getBlockSouth();
-    char getBlockNorth();
+    default int getStateDown(){return getBlockDown();}
+    default int getStateEast(){return getBlockEast();}
+    default int getStateWest(){return getBlockWest();}
+    default int getStateSouth(){return getBlockSouth();}
+    default int getStateNorth(){return getBlockNorth();}
 
-    char getBlock(int x, int y, int z);
+    default int getState(int x,int y,int z){return getBlock(x,y,z);}
+
+    /** Compatibility entry points for integrations using native packed chars. */
+    default void setBlockRange(int x,int y,int z,int y2,char c){setBlockRange(x,y,z,y2,(int)c);}
+    default void setBlockRangeSafe(int x,int y,int z,int y2,char c){setBlockRangeSafe(x,y,z,y2,(int)c);}
+    default IPrimerDriver block(char c){return block((int)c);}
+    default IPrimerDriver add(char c){return add((int)c);}
+    default char getBlock(){return nativeChar(getState());}
+    default char getBlockDown(){return nativeChar(getStateDown());}
+    default char getBlockEast(){return nativeChar(getStateEast());}
+    default char getBlockWest(){return nativeChar(getStateWest());}
+    default char getBlockSouth(){return nativeChar(getStateSouth());}
+    default char getBlockNorth(){return nativeChar(getStateNorth());}
+    default char getBlock(int x,int y,int z){return nativeChar(getState(x,y,z));}
+    static char nativeChar(int state){
+        if(state<0||state>65535)throw new IllegalArgumentException("Extended block state requires the integer driver API");
+        return (char)state;
+    }
 
     IPrimerDriver copy();
 

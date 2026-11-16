@@ -4,6 +4,10 @@ package mcjty.lostcities.core;
 public final class SphereShell {
     public interface Blocks { char get(int x,int y,int z);void set(int x,int y,int z,char block); }
     public static void generate(Blocks blocks,int cx,int cy,int cz,int radius,char glass,char side,char air,char liquid,int seaLevel,int outsideSeaLevel,int clearAbove,boolean aboveUntilAir,int clearBelow,boolean belowUntilAir,boolean clearRim){
+        generate(new IntBlocks(){public int get(int x,int y,int z){return blocks.get(x,y,z);}public void set(int x,int y,int z,int block){blocks.set(x,y,z,(char)block);}},cx,cy,cz,radius,glass,side,air,liquid,seaLevel,outsideSeaLevel,clearAbove,aboveUntilAir,clearBelow,belowUntilAir,clearRim);
+    }
+    public interface IntBlocks { int get(int x,int y,int z);void set(int x,int y,int z,int block); }
+    public static void generate(IntBlocks blocks,int cx,int cy,int cz,int radius,int glass,int side,int air,int liquid,int seaLevel,int outsideSeaLevel,int clearAbove,boolean aboveUntilAir,int clearBelow,boolean belowUntilAir,boolean clearRim){
         double squared=(double)radius*radius,inner=(double)(radius-2)*(radius-2),outer=(double)(radius+2)*(radius+2);
         int min=Math.max(0,cy-radius-1),max=Math.min(256,cy+radius+1);
         for(int x=0;x<16;x++)for(int z=0;z<16;z++){

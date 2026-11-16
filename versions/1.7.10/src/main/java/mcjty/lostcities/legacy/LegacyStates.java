@@ -3,14 +3,21 @@ package mcjty.lostcities.legacy;
 import net.minecraft.block.*;
 import net.minecraft.init.Blocks;
 
-/** Interns native block/metadata pairs once; placement uses packed chars without registry lookups. */
+/** Interns block/metadata pairs; packed integer states retain the full 24-bit block ID. */
 public final class LegacyStates {
     private static final LegacyState[] STATES=new LegacyState[65536];
+    private static final java.util.Map<Integer,LegacyState> EXTENDED=new java.util.HashMap<>();
     public static final StateIds IDS=new StateIds();
     public static LegacyState state(Block block){return state(block,0);}
     public static LegacyState state(Block block,int meta){
-        int id=(Block.getIdFromBlock(block)<<4)|meta;
-        if(id<0||id>=65536||meta<0||meta>15)throw new IllegalArgumentException("Block outside native 1.7.10 range: "+block+"@"+meta);
+        int blockId=block==null?-1:Block.getIdFromBlock(block);
+        if(blockId<0||blockId>0xFFFFFF||meta<0||meta>15)throw new IllegalArgumentException("Invalid 1.7.10 block/metadata: "+block+"@"+meta);
+        int id=(blockId<<4)|meta;
+        if(id>=STATES.length){
+            LegacyState extended=EXTENDED.get(id);
+            if(extended==null||extended.getBlock()!=block)EXTENDED.put(id,extended=new LegacyState(block,meta));
+            return extended;
+        }
         LegacyState state=STATES[id];
         if(state==null||state.getBlock()!=block)STATES[id]=state=new LegacyState(block,meta);
         return state;

@@ -61,7 +61,7 @@ public class DamageArea {
         }
     }
 
-    public Character damageBlock(Character b, LostCityChunkGenerator provider, int y, float damage, CompiledPalette palette, char liquidChar) {
+    public Integer damageBlock(Integer b, LostCityChunkGenerator provider, int y, float damage, CompiledPalette palette, int liquidChar) {
         if (b == LostCitiesTerrainGenerator.bedrockChar || b == LostCitiesTerrainGenerator.endportalChar || b == LostCitiesTerrainGenerator.endportalFrameChar) {
             return b;
         }
@@ -70,7 +70,7 @@ public class DamageArea {
             damage *= 2.5f;    // As if this block gets double the damage
         }
         if (provider.rand.nextFloat() <= damage) {
-            Character damaged = palette.canBeDamagedToIronBars(b);
+            Integer damaged = palette.getDamagedState(b);
             int waterlevel = profile.GROUNDLEVEL - profile.WATERLEVEL_OFFSET;
             if (damage < BLOCK_DAMAGE_CHANCE && damaged != null) {
                 if (provider.rand.nextFloat() < .7f) {

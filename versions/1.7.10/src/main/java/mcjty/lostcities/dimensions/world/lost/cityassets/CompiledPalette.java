@@ -17,7 +17,7 @@ import java.util.Set;
 public class CompiledPalette {
 
     private final Map<Character, Object> palette = new HashMap<>();
-    private final Map<Character, Character> damagedToBlock = new HashMap<>();
+    private final Map<Integer, Integer> damagedToBlock = new HashMap<>();
     private final Map<Character, Info> information = new HashMap<>();
     private final Map<Character,Info> explicitInformation=new HashMap<>();
     private final Map<Character,Character> aliases=new HashMap<>();
@@ -64,7 +64,7 @@ public class CompiledPalette {
         addPalettes(palettes);
     }
 
-    private int addEntries(char[] randomBlocks, int idx, char c, int cnt) {
+    private int addEntries(int[] randomBlocks, int idx, int c, int cnt) {
         for (int i = 0 ; i < cnt ; i++) {
             if (idx >= randomBlocks.length) {
                 return idx;
@@ -89,13 +89,13 @@ public class CompiledPalette {
                     if(!inherited)aliases.put(character,reference.charAt(0));
                 }else{
                     aliases.remove(character);Object value=raw instanceof Palette.Material?((Palette.Material)raw).resolve():raw;
-                    if(value instanceof LegacyState)palette.put(character,(char)mcjty.lostcities.legacy.LegacyStates.IDS.get((LegacyState)value));
+                    if(value instanceof LegacyState)palette.put(character,mcjty.lostcities.legacy.LegacyStates.IDS.get((LegacyState)value));
                     else if(value instanceof Pair[]){
-                        char[] choices=new char[128];int count=0;
+                        int[] choices=new int[128];int count=0;
                         for(Pair<Integer,?> choice:(Pair<Integer,?>[])value){
                             if(choice.getLeft()<0)throw new IllegalArgumentException("Negative palette weight for "+character);
                             Object material=choice.getRight();LegacyState selected=material instanceof Palette.Material?((Palette.Material)material).resolve():(LegacyState)material;
-                            count=addEntries(choices,count,(char)mcjty.lostcities.legacy.LegacyStates.IDS.get(selected),choice.getLeft());if(count==128)break;
+                            count=addEntries(choices,count,mcjty.lostcities.legacy.LegacyStates.IDS.get(selected),choice.getLeft());if(count==128)break;
                         }
                         if(count==0)throw new IllegalArgumentException("Empty weighted palette for "+character);
                         while(count<128){choices[count]=choices[count-1];count++;}palette.put(character,choices);
@@ -109,8 +109,8 @@ public class CompiledPalette {
                 if(raw instanceof Palette.Material)info.singleContainer=mcjty.lostcities.materials.BlockSpec.parse(((Palette.Material)raw).source).id.equals("minecraft:barrel");
                 if(emptyInfo(info))explicitInformation.remove(character);else explicitInformation.put(character,info);
             }
-            for(Map.Entry<String,String> entry:layer.rawDamage.entrySet())damagedToBlock.put((char)mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.varia.Tools.stringToState(entry.getKey())),(char)mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.varia.Tools.stringToState(entry.getValue())));
-            for(Map.Entry<LegacyState,LegacyState> entry:layer.getDamaged().entrySet())damagedToBlock.put((char)mcjty.lostcities.legacy.LegacyStates.IDS.get(entry.getKey()),(char)mcjty.lostcities.legacy.LegacyStates.IDS.get(entry.getValue()));
+            for(Map.Entry<String,String> entry:layer.rawDamage.entrySet())damagedToBlock.put(mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.varia.Tools.stringToState(entry.getKey())),mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.varia.Tools.stringToState(entry.getValue())));
+            for(Map.Entry<LegacyState,LegacyState> entry:layer.getDamaged().entrySet())damagedToBlock.put(mcjty.lostcities.legacy.LegacyStates.IDS.get(entry.getKey()),mcjty.lostcities.legacy.LegacyStates.IDS.get(entry.getValue()));
         }
         java.util.List<Character> ordered=mcjty.lostcities.assets.PaletteAliases.resolve(aliases,palette);
         information.clear();for(Map.Entry<Character,Info> entry:explicitInformation.entrySet())information.put(entry.getKey(),copyInfo(entry.getValue()));
@@ -130,10 +130,10 @@ public class CompiledPalette {
             Object o = palette.get(c);
             if (o instanceof LegacyState) {
                 return (LegacyState) o;
-            } else if (o instanceof Character) {
-                return mcjty.lostcities.legacy.LegacyStates.IDS.getByValue((Character) o);
+            } else if (o instanceof Integer) {
+                return mcjty.lostcities.legacy.LegacyStates.IDS.getByValue((Integer) o);
             } else {
-                char[] randomBlocks = (char[]) o;
+                int[] randomBlocks = (int[]) o;
                 return mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(randomBlocks[0]);
             }
         } catch (Exception e) {
@@ -147,19 +147,19 @@ public class CompiledPalette {
      */
     public boolean isSimple(char c) {
         Object o = palette.get(c);
-        return o instanceof Character;
+        return o instanceof Integer;
     }
 
     // Same as get(c) but with a predefined random generator that is predictable
-    public Character get(char c, Random rand) {
+    public Integer getState(char c, Random rand) {
         try {
             Object o = palette.get(c);
-            if (o instanceof Character) {
-                return (Character) o;
+            if (o instanceof Integer) {
+                return (Integer) o;
             } else if (o == null) {
                 return null;
             } else {
-                char[] randomBlocks = (char[]) o;
+                int[] randomBlocks = (int[]) o;
                 return randomBlocks[rand.nextInt(128)];
             }
         } catch (Exception e) {
@@ -169,15 +169,15 @@ public class CompiledPalette {
 
     }
 
-    public Character get(char c) {
+    public Integer getState(char c) {
         try {
             Object o = palette.get(c);
-            if (o instanceof Character) {
-                return (Character) o;
+            if (o instanceof Integer) {
+                return (Integer) o;
             } else if (o == null) {
                 return null;
             } else {
-                char[] randomBlocks = (char[]) o;
+                int[] randomBlocks = (int[]) o;
                 return randomBlocks[LostCitiesTerrainGenerator.fastrand128()];
             }
         } catch (Exception e) {
@@ -186,9 +186,15 @@ public class CompiledPalette {
         }
     }
 
-    public Character canBeDamagedToIronBars(Character b) {
+    public Integer getDamagedState(Integer b) {
         return damagedToBlock.get(b);
     }
+
+    /** Native-range compatibility for integrations using the original character API. */
+    public Character get(char c){return nativeValue(getState(c));}
+    public Character get(char c,Random rand){return nativeValue(getState(c,rand));}
+    public Character canBeDamagedToIronBars(Character b){return nativeValue(getDamagedState((int)b));}
+    private static Character nativeValue(Integer state){return state==null?null:mcjty.lostcities.dimensions.world.driver.IPrimerDriver.nativeChar(state);}
 
     public Info getInfo(Character c) { return information.get(c); }
 }

@@ -81,14 +81,14 @@ public class OptimizedDriver implements IPrimerDriver {
     }
 
     @Override
-    public void setBlockRange(int x, int y, int z, int y2, char c) {
+    public void setBlockRange(int x, int y, int z, int y2, int c) {
         int s = getBlockIndex(x, y, z);
         int e = s + y2-y;
         Arrays.fill(primer.data, s, e, c);
     }
 
     @Override
-    public void setBlockRangeSafe(int x, int y, int z, int y2, char c) {
+    public void setBlockRangeSafe(int x, int y, int z, int y2, int c) {
         if (y2 <= y) {
             return;
         }
@@ -98,55 +98,55 @@ public class OptimizedDriver implements IPrimerDriver {
     }
 
     @Override
-    public IPrimerDriver block(char c) {
+    public IPrimerDriver block(int c) {
         primer.data[current] = c;
         return this;
     }
 
     @Override
     public IPrimerDriver block(LegacyState c) {
-        primer.data[current] = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(c);
+        primer.data[current] = mcjty.lostcities.legacy.LegacyStates.IDS.get(c);
         return this;
     }
 
     @Override
-    public IPrimerDriver add(char c) {
+    public IPrimerDriver add(int c) {
         primer.data[current++] = c;
         return this;
     }
 
     @Override
-    public char getBlock() {
+    public int getState() {
         return primer.data[current];
     }
 
     @Override
-    public char getBlockDown() {
+    public int getStateDown() {
         return primer.data[current-1];
     }
 
     @Override
-    public char getBlockEast() {
+    public int getStateEast() {
         return primer.data[current  + (1<<12)];
     }
 
     @Override
-    public char getBlockWest() {
+    public int getStateWest() {
         return primer.data[current  - (1<<12)];
     }
 
     @Override
-    public char getBlockSouth() {
+    public int getStateSouth() {
         return primer.data[current  + (1<<8)];
     }
 
     @Override
-    public char getBlockNorth() {
+    public int getStateNorth() {
         return primer.data[current  - (1<<8)];
     }
 
     @Override
-    public char getBlock(int x, int y, int z) {
+    public int getState(int x, int y, int z) {
         return primer.data[getBlockIndex(x, y, z)];
     }
 

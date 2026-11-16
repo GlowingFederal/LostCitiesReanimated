@@ -87,7 +87,7 @@ public class SafeDriver implements IPrimerDriver {
     }
 
     @Override
-    public void setBlockRange(int x, int y, int z, int y2, char c) {
+    public void setBlockRange(int x, int y, int z, int y2, int c) {
         LegacyState state = mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(c);
         while (y < y2) {
             primer.setBlockState(x, y, z, state);
@@ -96,7 +96,7 @@ public class SafeDriver implements IPrimerDriver {
     }
 
     @Override
-    public void setBlockRangeSafe(int x, int y, int z, int y2, char c) {
+    public void setBlockRangeSafe(int x, int y, int z, int y2, int c) {
         LegacyState state = mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(c);
         while (y < y2) {
             primer.setBlockState(x, y, z, state);
@@ -105,7 +105,7 @@ public class SafeDriver implements IPrimerDriver {
     }
 
     @Override
-    public IPrimerDriver block(char c) {
+    public IPrimerDriver block(int c) {
         LegacyState state = mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(c);
         primer.setBlockState(currentX, currentY, currentZ, state);
         return this;
@@ -118,46 +118,46 @@ public class SafeDriver implements IPrimerDriver {
     }
 
     @Override
-    public IPrimerDriver add(char c) {
+    public IPrimerDriver add(int c) {
         LegacyState state = mcjty.lostcities.legacy.LegacyStates.IDS.getByValue(c);
         primer.setBlockState(currentX, currentY++, currentZ, state);
         return this;
     }
 
     @Override
-    public char getBlock() {
-        return (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY, currentZ));
+    public int getState() {
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY, currentZ));
     }
 
     @Override
-    public char getBlockDown() {
-        return (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY-1, currentZ));
+    public int getStateDown() {
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY-1, currentZ));
     }
 
     @Override
-    public char getBlockEast() {
-        return (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX+1, currentY, currentZ));
+    public int getStateEast() {
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX+1, currentY, currentZ));
     }
 
     @Override
-    public char getBlockWest() {
-        return (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX-1, currentY, currentZ));
+    public int getStateWest() {
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX-1, currentY, currentZ));
     }
 
     @Override
-    public char getBlockSouth() {
-        return (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY, currentZ+1));
+    public int getStateSouth() {
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY, currentZ+1));
     }
 
     @Override
-    public char getBlockNorth() {
-        return (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY, currentZ-1));
+    public int getStateNorth() {
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(currentX, currentY, currentZ-1));
     }
 
 
     @Override
-    public char getBlock(int x, int y, int z) {
-        return (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(x, y, z));
+    public int getState(int x, int y, int z) {
+        return mcjty.lostcities.legacy.LegacyStates.IDS.get(primer.getBlockState(x, y, z));
     }
 
     @Override

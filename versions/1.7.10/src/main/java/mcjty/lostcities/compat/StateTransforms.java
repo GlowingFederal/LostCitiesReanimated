@@ -7,9 +7,12 @@ import net.minecraft.block.*;
 /** Native metadata transformations for all supported vanilla/UAB shapes and functional blocks. */
 public final class StateTransforms {
     private static final int[][] CACHE=new int[Transform.values().length][];
-    public static char transform(char id,Transform transform){
+    private static final java.util.Map<Transform,java.util.Map<Integer,Integer>> EXTENDED=new java.util.EnumMap<>(Transform.class);
+    public static int transform(int id,Transform transform){
         if(transform==Transform.ROTATE_NONE)return id;
-        int[] cache=CACHE[transform.ordinal()];if(cache==null)CACHE[transform.ordinal()]=cache=new int[65536];if(cache[id]!=0)return (char)(cache[id]-1);
+        int[] cache=CACHE[transform.ordinal()];if(cache==null)CACHE[transform.ordinal()]=cache=new int[65536];
+        java.util.Map<Integer,Integer> extended=EXTENDED.computeIfAbsent(transform,key->new java.util.HashMap<>());
+        if(id<cache.length){if(cache[id]!=0)return cache[id]-1;}else{Integer found=extended.get(id);if(found!=null)return found;}
         LegacyState state=LegacyStates.IDS.getByValue(id);Block block=state.getBlock();int meta=state.meta;
         boolean mirror=transform==Transform.MIRROR_X||transform==Transform.MIRROR_Z||transform==Transform.MIRROR_90_X;
         if(block instanceof BlockRailBase)state=state.withProperty(mcjty.lostcities.legacy.Properties.RAIL,transform.transform(state.getValue(mcjty.lostcities.legacy.Properties.RAIL)));
@@ -24,7 +27,8 @@ public final class StateTransforms {
             }}
             if(mirror&&block instanceof BlockDoor&&(meta&8)!=0)state=LegacyStates.state(block,state.meta^1);
         }
-        int result=LegacyStates.IDS.get(state);cache[id]=result+1;return (char)result;
+        int result=LegacyStates.IDS.get(state);if(id<cache.length)cache[id]=result+1;else extended.put(id,result);return result;
     }
+    public static char transform(char id,Transform transform){return mcjty.lostcities.dimensions.world.driver.IPrimerDriver.nativeChar(transform((int)id,transform));}
     private StateTransforms(){}
 }

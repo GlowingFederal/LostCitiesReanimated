@@ -38,9 +38,9 @@ public class SpaceTerrainGenerator {
         LostCityProfile profile = provider.getProfile();
         LostCityProfile profileOut = provider.getOutsideProfile();
         boolean outsideLandscape = profile.CITYSPHERE_LANDSCAPE_OUTSIDE;
-        Character baseLiquid = terrainGenerator.liquidChar;
-        Character baseChar = terrainGenerator.baseChar;
-        char airChar = LostCitiesTerrainGenerator.airChar;
+        Integer baseLiquid = terrainGenerator.liquidChar;
+        Integer baseChar = terrainGenerator.baseChar;
+        int airChar = LostCitiesTerrainGenerator.airChar;
 
         this.surfaceBuffer = this.surfaceNoise.func_151599_a(this.surfaceBuffer, (chunkX * 16), (chunkZ * 16), 16, 16, 1.0 / 16.0, 1.0 / 16.0, 1.0D);
 
@@ -73,7 +73,7 @@ public class SpaceTerrainGenerator {
     }
 
     private void fillSphere(int centerx, int centery, int centerz, int radius,
-                            char glass, char block, char sideBlock, char liquidChar, char baseChar, boolean outsideLandscape) {
+                            int glass, int block, int sideBlock, int liquidChar, int baseChar, boolean outsideLandscape) {
         double sqradius = radius * radius;
         double sqradiusOffset = (radius-2) * (radius-2);
         LostCityProfile profile = provider.getProfile();
@@ -186,12 +186,12 @@ public class SpaceTerrainGenerator {
 
     private void genBiomeTerrain(BiomeGenBase BiomeGenBase, ChunkPrimer primer, int x, int z, int topLevel, int waterLevel, LostCitiesTerrainGenerator terrainGenerator) {
         driver.setPrimer(primer);
-        char air = LostCitiesTerrainGenerator.airChar;
-        char baseBlock = terrainGenerator.baseChar;
-        char gravelBlock = LostCitiesTerrainGenerator.gravelChar;
+        int air = LostCitiesTerrainGenerator.airChar;
+        int baseBlock = terrainGenerator.baseChar;
+        int gravelBlock = LostCitiesTerrainGenerator.gravelChar;
 
-        char fillerBlock = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(BiomeGenBase.fillerBlock));
-        char topBlock = (char) mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(BiomeGenBase.topBlock));
+        int fillerBlock = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(BiomeGenBase.fillerBlock));
+        int topBlock = mcjty.lostcities.legacy.LegacyStates.IDS.get(mcjty.lostcities.legacy.LegacyStates.state(BiomeGenBase.topBlock));
 
         int cx = x & 15;
         int cz = z & 15;
@@ -199,7 +199,7 @@ public class SpaceTerrainGenerator {
         int cnt = 0;
         for (int y = topLevel + 20 ; y >= topLevel - 8 ; y--) {
             driver.current(cx, y, cz);
-            if (driver.getBlock() == baseBlock) {
+            if (driver.getState() == baseBlock) {
                 // @todo experiment with more realistic toppings for under water
 //                if (y == waterLevel-2) {
 //                    primer.data[index] = gravelBlock;

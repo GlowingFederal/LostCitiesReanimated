@@ -1,5 +1,11 @@
 # Changelog
 
+2026-11-15 22:48 — EndlessIDs biome and extended block ID compatibility
+
+- Write 1.7.10 biome IDs through EndlessIDs’ active short-array storage while keeping ordinary Forge and disabled-biome-module behavior.
+- Retain full 24-bit block IDs throughout terrain buffers, palettes, rotations, damage, spheres and deferred block-entity work, preserving native metadata, palette symbols and named save records.
+- Snapshot optional-material recovery from native chunk sections without assuming vanilla chunk NBT arrays; retain existing recovery records and saved terrain, including chests whose facing changes during placement.
+
 2026-11-12 04:12 — Unified versioning and release builds
 
 - Centralize the existing `0.1.0-dev` backport version in root `version.properties`, including both target artifacts and Forge mod metadata.

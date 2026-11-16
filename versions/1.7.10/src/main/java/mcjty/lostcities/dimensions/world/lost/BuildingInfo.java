@@ -92,12 +92,14 @@ public class BuildingInfo implements ILostChunkInfo {
     private Boolean verticalMonorail = null;
 
     public static final class TagTodo {
-        public final BlockPos position;public final char block;public final com.google.gson.JsonObject tag;
-        public TagTodo(BlockPos position,char block,com.google.gson.JsonObject tag){this.position=position;this.block=block;this.tag=tag;}
+        public final BlockPos position;public final int block;public final com.google.gson.JsonObject tag;
+        public TagTodo(BlockPos position,char block,com.google.gson.JsonObject tag){this(position,(int)block,tag);}
+        public TagTodo(BlockPos position,int block,com.google.gson.JsonObject tag){this.position=position;this.block=block;this.tag=tag;}
     }
     private final List<TagTodo> tagTodo=new ArrayList<>();
     public List<TagTodo> getTagTodo(){return tagTodo;}
-    public void addTagTodo(BlockPos position,char block,com.google.gson.JsonObject tag){pendingSaved=false;tagTodo.add(new TagTodo(position,block,tag));}
+    public void addTagTodo(BlockPos position,char block,com.google.gson.JsonObject tag){addTagTodo(position,(int)block,tag);}
+    public void addTagTodo(BlockPos position,int block,com.google.gson.JsonObject tag){pendingSaved=false;tagTodo.add(new TagTodo(position,block,tag));}
     // A list of todo's for mob spawners and other things
     private final List<Pair<BlockPos, ConditionTodo>> mobSpawnerTodo = new ArrayList<>();
     private final List<Pair<BlockPos, ConditionTodo>> lootTodo = new ArrayList<>();

@@ -40,7 +40,7 @@ public final class MaterialWorldData extends WorldSavedData implements HighwayHu
         restoreConditions(work.getTagList("Loot",10),info,false);restoreConditions(work.getTagList("Spawners",10),info,true);
         NBTTagList trees=work.getTagList("Trees",10);for(int i=0;i<trees.tagCount();i++)info.addSaplingTodo(coordinates(trees.getCompoundTagAt(i)));
         NBTTagList lighting=work.getTagList("Lighting",10);for(int i=0;i<lighting.tagCount();i++)info.addLightingUpdateTodo(coordinates(lighting.getCompoundTagAt(i)));
-        NBTTagList tags=work.getTagList("Tags",10);for(int i=0;i<tags.tagCount();i++){NBTTagCompound entry=tags.getCompoundTagAt(i);info.addTagTodo(coordinates(entry),(char)mcjty.lostcities.legacy.LegacyStates.IDS.get(resolver().resolve(entry.getString("Block"))),new com.google.gson.JsonParser().parse(entry.getString("Tag")).getAsJsonObject());}
+        NBTTagList tags=work.getTagList("Tags",10);for(int i=0;i<tags.tagCount();i++){NBTTagCompound entry=tags.getCompoundTagAt(i);info.addTagTodo(coordinates(entry),mcjty.lostcities.legacy.LegacyStates.IDS.get(resolver().resolve(entry.getString("Block"))),new com.google.gson.JsonParser().parse(entry.getString("Tag")).getAsJsonObject());}
         info.pendingSaved();
     }
     private static void restoreConditions(NBTTagList entries,BuildingInfo info,boolean spawners){

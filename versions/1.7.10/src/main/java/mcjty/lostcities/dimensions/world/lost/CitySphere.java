@@ -40,9 +40,9 @@ public class CitySphere implements ILostSphere {
     private boolean monorailWestCandidate;
     private boolean monorailEastCandidate;
 
-    private char glassBlock = 0;
-    private char baseBlock = 0;
-    private char sideBlock = 0;
+    private int glassBlock = 0;
+    private int baseBlock = 0;
+    private int sideBlock = 0;
 
     private CitySphere(ChunkCoord center, float radius, BlockPos centerPos, boolean enabled) {
         this.enabled = enabled;
@@ -64,9 +64,9 @@ public class CitySphere implements ILostSphere {
         rand.nextFloat();
         rand.nextFloat();
 
-        Character glass = info.getCompiledPalette().get(cs.getSphereGlassBlock(), rand);
-        Character base = info.getCompiledPalette().get(cs.getSphereBlock(), rand);
-        Character side = info.getCompiledPalette().get(cs.getSphereSideBlock(), rand);
+        Integer glass = info.getCompiledPalette().getState(cs.getSphereGlassBlock(), rand);
+        Integer base = info.getCompiledPalette().getState(cs.getSphereBlock(), rand);
+        Integer side = info.getCompiledPalette().getState(cs.getSphereSideBlock(), rand);
         sphere.setBlocks(glass, base, side);
     }
 
@@ -134,7 +134,7 @@ public class CitySphere implements ILostSphere {
         return biome;
     }
 
-    public void setBlocks(char glassBlock, char baseBlock, char sideBlock) {
+    public void setBlocks(int glassBlock, int baseBlock, int sideBlock) {
         this.glassBlock = glassBlock;
         this.baseBlock = baseBlock;
         this.sideBlock = sideBlock;
@@ -145,15 +145,15 @@ public class CitySphere implements ILostSphere {
         return enabled;
     }
 
-    public char getGlassBlock() {
+    public int getGlassBlock() {
         return glassBlock;
     }
 
-    public char getBaseBlock() {
+    public int getBaseBlock() {
         return baseBlock;
     }
 
-    public char getSideBlock() {
+    public int getSideBlock() {
         return sideBlock;
     }
 

@@ -81,7 +81,7 @@ public final class LostCityChunkGenerator implements IChunkProvider, ILostChunkG
     private mcjty.lostcities.compat.ModernGeneration modernGeneration;
     public mcjty.lostcities.compat.ModernGeneration planning(){if(!mcjty.lostcities.core.GenerationScope.owns(this))return contextual(this::planning);if(modernGeneration==null)modernGeneration=new mcjty.lostcities.compat.ModernGeneration(this);return modernGeneration;}
     public <R> R contextual(java.util.function.Supplier<R> action){
-        long previousTerrain=terrainGenerator.captureState();
+        int[] previousTerrain=terrainGenerator.captureState();
         Object previousOwner=mcjty.lostcities.core.GenerationScope.bind(this);
         boolean previousAssets=mcjty.lostcities.assets.AssetContext.bind(modernMode());
         mcjty.lostcities.materials.MaterialResolver<LegacyState> previous=LegacyMaterials.bind(null);
@@ -129,7 +129,7 @@ public final class LostCityChunkGenerator implements IChunkProvider, ILostChunkG
         long key=key(x,z);ChunkHeightmap height=heights.get(key);
         if(height==null){ChunkPrimer primer=primers.get(key);if(primer==null){primer=generatePrimer(x,z);primers.put(key,primer);}
             OptimizedDriver driver=new OptimizedDriver();driver.setPrimer(primer);
-            height=new ChunkHeightmap(driver,profile.LANDSCAPE_TYPE,profile.GROUNDLEVEL,(char)LegacyStates.IDS.get(profile.getBaseBlock()));heights.put(key,height);
+            height=new ChunkHeightmap(driver,profile.LANDSCAPE_TYPE,profile.GROUNDLEVEL,LegacyStates.IDS.get(profile.getBaseBlock()));heights.put(key,height);
         }return height;
     }
     public ChunkPrimer getChunkPrimer(int x,int z,boolean city){
@@ -138,7 +138,7 @@ public final class LostCityChunkGenerator implements IChunkProvider, ILostChunkG
     }
     @Override public Chunk provideChunk(int x,int z){
         enterMetadata(x,z);
-        long previousTerrain=terrainGenerator.captureState();
+        int[] previousTerrain=terrainGenerator.captureState();
         Object previousOwner=mcjty.lostcities.core.GenerationScope.bind(this);
         boolean previousAssets=mcjty.lostcities.assets.AssetContext.bind(modernMode());
         selectWorldStyle();
@@ -159,13 +159,13 @@ public final class LostCityChunkGenerator implements IChunkProvider, ILostChunkG
             if(profile.GENERATE_SCATTERED)temples.func_151539_a(this,worldObj,x,z,blocks);
             if(profile.isSpheres()){primer.load(blocks,metadata);terrainGenerator.finishSphere(x,z,primer);blocks=primer.blocks();metadata=primer.metadata();}
             Chunk chunk=new Chunk(worldObj,blocks,metadata,x,z);
-            byte[] biomeIds=chunk.getBiomeArray();for(int i=0;i<256;i++)biomeIds[i]=(byte)biomes[i].biomeID;
+            mcjty.lostcities.compat.BiomeStorage.write(chunk,biomes);
             chunk.generateSkylightMap();capturePendingNeighborhood(x,z);return chunk;
         } finally {leaveMetadata(x,z);materialData().markDirty();LegacyMaterials.restore(previous);mcjty.lostcities.assets.AssetContext.restore(previousAssets);terrainGenerator.restoreState(previousTerrain);mcjty.lostcities.core.GenerationScope.restore(previousOwner);}
     }
     @Override public void populate(IChunkProvider provider,int cx,int cz){
         enterMetadata(cx,cz);
-        long previousTerrain=terrainGenerator.captureState();
+        int[] previousTerrain=terrainGenerator.captureState();
         Object previousOwner=mcjty.lostcities.core.GenerationScope.bind(this);
         boolean falling=BlockFalling.fallInstantly;BlockFalling.fallInstantly=true;
         boolean previousAssets=mcjty.lostcities.assets.AssetContext.bind(modernMode());
